@@ -1,0 +1,859 @@
+<title>Tracker Livrări Comenzi</title>
+<style>
+  :root {
+    --bg: #edf0f3;
+    --surface: #ffffff;
+    --surface-2: #f5f7f9;
+    --text: #171b21;
+    --text-muted: #5b6572;
+    --border: #d7dce1;
+    --accent: #2e5c8a;
+    --accent-strong: #1f4266;
+    --accent-soft: #e4ecf3;
+    --ok: #1f7a46;
+    --ok-soft: #e3f3e8;
+    --warn: #9c6510;
+    --warn-soft: #fbf0dd;
+    --pending: #5b6572;
+    --pending-soft: #eef0f2;
+    --danger: #a63229;
+    --danger-soft: #fbe7e5;
+    --shadow: 0 1px 2px rgba(23, 27, 33, 0.06), 0 4px 14px rgba(23, 27, 33, 0.05);
+    --radius: 10px;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #10151b;
+      --surface: #1a2028;
+      --surface-2: #212832;
+      --text: #e7eaee;
+      --text-muted: #9aa4b2;
+      --border: #2b333e;
+      --accent: #7fb0dd;
+      --accent-strong: #a9cceb;
+      --accent-soft: #1f2e3e;
+      --ok: #58b47c;
+      --ok-soft: #1b2e22;
+      --warn: #dcaa4f;
+      --warn-soft: #332a19;
+      --pending: #98a1af;
+      --pending-soft: #232933;
+      --danger: #e28a83;
+      --danger-soft: #33201f;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 20px rgba(0, 0, 0, 0.28);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #10151b;
+    --surface: #1a2028;
+    --surface-2: #212832;
+    --text: #e7eaee;
+    --text-muted: #9aa4b2;
+    --border: #2b333e;
+    --accent: #7fb0dd;
+    --accent-strong: #a9cceb;
+    --accent-soft: #1f2e3e;
+    --ok: #58b47c;
+    --ok-soft: #1b2e22;
+    --warn: #dcaa4f;
+    --warn-soft: #332a19;
+    --pending: #98a1af;
+    --pending-soft: #232933;
+    --danger: #e28a83;
+    --danger-soft: #33201f;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 20px rgba(0, 0, 0, 0.28);
+  }
+  :root[data-theme="light"] {
+    --bg: #edf0f3;
+    --surface: #ffffff;
+    --surface-2: #f5f7f9;
+    --text: #171b21;
+    --text-muted: #5b6572;
+    --border: #d7dce1;
+    --accent: #2e5c8a;
+    --accent-strong: #1f4266;
+    --accent-soft: #e4ecf3;
+    --ok: #1f7a46;
+    --ok-soft: #e3f3e8;
+    --warn: #9c6510;
+    --warn-soft: #fbf0dd;
+    --pending: #5b6572;
+    --pending-soft: #eef0f2;
+    --danger: #a63229;
+    --danger-soft: #fbe7e5;
+    --shadow: 0 1px 2px rgba(23, 27, 33, 0.06), 0 4px 14px rgba(23, 27, 33, 0.05);
+  }
+
+  * { box-sizing: border-box; }
+  html, body {
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    color: var(--text);
+    font: 15px/1.55 -apple-system, "Segoe UI", "Segoe UI Variable", system-ui, Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  body { overflow-x: hidden; }
+
+  h1, h2, h3, .label-face {
+    font-family: "Bahnschrift", "Arial Narrow", "Segoe UI Semibold", sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    text-wrap: balance;
+  }
+
+  .mono, code, .qty, td.qty-cell, .csv-box textarea {
+    font-family: ui-monospace, "Cascadia Mono", "Consolas", "SFMono-Regular", monospace;
+    font-variant-numeric: tabular-nums;
+  }
+
+  a { color: var(--accent); }
+  button { font: inherit; }
+  :focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  .wrap {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 28px 20px 64px;
+    display: flex;
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  /* header */
+  .topbar {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .brand-eyebrow {
+    font-family: "Bahnschrift", "Arial Narrow", sans-serif;
+    font-size: 11.5px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin: 0 0 4px;
+  }
+  .topbar h1 {
+    margin: 0;
+    font-size: 27px;
+  }
+  .topbar .sub {
+    margin: 6px 0 0;
+    color: var(--text-muted);
+    max-width: 54ch;
+    font-size: 14px;
+  }
+  .topbar-actions {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+    padding: 9px 14px;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.15s ease, background 0.15s ease, transform 0.05s ease;
+    white-space: nowrap;
+  }
+  .btn:hover { border-color: var(--accent); }
+  .btn:active { transform: translateY(1px); }
+  .btn-primary {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: #fff;
+  }
+  .btn-primary:hover { background: var(--accent-strong); border-color: var(--accent-strong); }
+  .btn-ghost { background: transparent; }
+  .btn-sm { padding: 6px 10px; font-size: 12.5px; }
+  .btn[disabled] { opacity: 0.5; cursor: not-allowed; }
+  input[type="file"] { display: none; }
+
+  /* generic panel */
+  .panel {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+  }
+
+  /* workflow steps */
+  .steps {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 720px) {
+    .steps { grid-template-columns: 1fr; }
+  }
+  .step {
+    padding: 18px 18px 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .step-num {
+    width: 26px;
+    height: 26px;
+    border-radius: 7px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Bahnschrift", "Arial Narrow", sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+  }
+  .step h3 { margin: 0; font-size: 15.5px; }
+  .step p { margin: 0; color: var(--text-muted); font-size: 13.5px; }
+  .prompt-box {
+    position: relative;
+  }
+  .prompt-box textarea {
+    width: 100%;
+    resize: vertical;
+    min-height: 130px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    padding: 10px 11px;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  .prompt-box .btn { margin-top: 8px; }
+
+  /* section headings */
+  .section-head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .section-head h2 { margin: 0; font-size: 17px; }
+  .section-head .count {
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+
+  /* summary tiles */
+  .tiles {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
+  }
+  @media (max-width: 640px) {
+    .tiles { grid-template-columns: repeat(2, 1fr); }
+  }
+  .tile {
+    padding: 14px 14px 12px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border);
+    background: var(--surface);
+  }
+  .tile .n {
+    font-family: "Bahnschrift", "Arial Narrow", sans-serif;
+    font-size: 26px;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+  .tile .l {
+    margin-top: 6px;
+    font-size: 12px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .tile.ok .n { color: var(--ok); }
+  .tile.warn .n { color: var(--warn); }
+  .tile.pending .n { color: var(--pending); }
+  .tile.danger .n { color: var(--danger); }
+
+  /* new order form */
+  .form-panel { padding: 18px; display: flex; flex-direction: column; gap: 12px; }
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field label { font-size: 12.5px; font-weight: 600; color: var(--text-muted); }
+  .field input[type="text"], .field textarea, .field select {
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    color: var(--text);
+    padding: 9px 10px;
+    font-size: 13.5px;
+    width: 100%;
+  }
+  .field textarea { min-height: 90px; resize: vertical; font-size: 12.5px; }
+  .field .hint { font-size: 12px; color: var(--text-muted); }
+  .form-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+  /* empty state */
+  .empty {
+    padding: 34px 20px;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+
+  /* order cards */
+  .orders { display: flex; flex-direction: column; gap: 14px; }
+  .order-card { overflow: hidden; }
+  .order-card > summary {
+    list-style: none;
+    cursor: pointer;
+    padding: 14px 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    flex-wrap: wrap;
+  }
+  .order-card > summary::-webkit-details-marker { display: none; }
+  .order-title { display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .order-title .chev {
+    color: var(--text-muted);
+    transition: transform 0.15s ease;
+    flex: none;
+  }
+  .order-card[open] .chev { transform: rotate(90deg); }
+  .order-title h3 { margin: 0; font-size: 15px; }
+  .order-meta { font-size: 12px; color: var(--text-muted); white-space: nowrap; }
+  .order-stats { display: flex; gap: 8px; flex-wrap: wrap; }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+  .chip.ok { background: var(--ok-soft); color: var(--ok); }
+  .chip.warn { background: var(--warn-soft); color: var(--warn); }
+  .chip.pending { background: var(--pending-soft); color: var(--pending); }
+  .chip.danger { background: var(--danger-soft); color: var(--danger); }
+  .chip .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+
+  .order-body { border-top: 1px solid var(--border); padding: 14px 18px 18px; display: flex; flex-direction: column; gap: 14px; }
+  .add-delivery { padding: 12px; background: var(--surface-2); border: 1px dashed var(--border); border-radius: 8px; display: flex; flex-direction: column; gap: 8px; }
+  .add-delivery .form-row { align-items: stretch; }
+  .add-delivery textarea { flex: 1; min-width: 220px; }
+
+  .table-scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; }
+  table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 620px; }
+  thead th {
+    text-align: left;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-muted);
+    background: var(--surface-2);
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  tbody td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  tbody tr:last-child td { border-bottom: none; }
+  td.qty-cell { text-align: right; }
+  th.qty-cell { text-align: right; }
+  .part-name { color: var(--text-muted); font-size: 12.5px; }
+  .hist-toggle {
+    background: none; border: none; color: var(--accent); font-size: 12px; cursor: pointer;
+    padding: 2px 0; font-weight: 600;
+  }
+  .hist-row td { padding: 0 12px 10px; }
+  .hist-row.hidden { display: none; }
+  .hist-list { margin: 0; padding: 8px 10px; background: var(--surface-2); border-radius: 6px; font-size: 12px; color: var(--text-muted); display: flex; flex-direction: column; gap: 3px; }
+  .hist-list .row { display: flex; justify-content: space-between; gap: 10px; }
+
+  .banner {
+    display: flex;
+    gap: 10px;
+    align-items: flex-start;
+    padding: 11px 13px;
+    border-radius: 8px;
+    font-size: 13px;
+  }
+  .banner.danger { background: var(--danger-soft); color: var(--danger); }
+  .banner.warn { background: var(--warn-soft); color: var(--warn); }
+  .banner ul { margin: 4px 0 0; padding-left: 18px; }
+  .unmatched-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .unmatched-row .btn { flex: none; }
+
+  .note {
+    font-size: 12px;
+    color: var(--text-muted);
+    display: flex;
+    gap: 7px;
+    align-items: flex-start;
+  }
+
+  /* toast */
+  #toasts {
+    position: fixed;
+    bottom: 18px;
+    right: 18px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    z-index: 50;
+  }
+  .toast {
+    background: var(--text);
+    color: var(--bg);
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    box-shadow: var(--shadow);
+    max-width: 320px;
+    animation: toast-in 0.18s ease;
+  }
+  .toast.err { background: var(--danger); color: #fff; }
+  @keyframes toast-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: 0.001ms !important; transition-duration: 0.001ms !important; }
+  }
+
+  footer.hint-footer {
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 12px;
+    padding-top: 6px;
+  }
+</style>
+
+<div class="wrap">
+
+  <div class="topbar">
+    <div>
+      <p class="brand-eyebrow">Piese Auto · Aprovizionare</p>
+      <h1>Tracker Livrări Comenzi</h1>
+      <p class="sub">Urmărește ce s-a livrat față de ce ai comandat, comandă cu comandă, fără să mai deschizi fiecare factură manual.</p>
+    </div>
+    <div class="topbar-actions">
+      <button class="btn" id="btn-load" type="button">Încarcă progres</button>
+      <input type="file" id="file-load" accept="application/json,.json" />
+      <button class="btn btn-primary" id="btn-save" type="button">Salvează progres</button>
+    </div>
+  </div>
+
+  <section class="steps">
+    <div class="panel step">
+      <div class="step-num">1</div>
+      <h3>Extrage liniile cu Claude</h3>
+      <p>Deschide o conversație cu Claude, atașează comanda sau factura (PDF, Excel sau poză — orice format ai) și lipește promptul de mai jos. Claude îți întoarce liniile gata formatate.</p>
+      <div class="prompt-box">
+        <textarea id="prompt-text" class="mono" readonly rows="6"></textarea>
+        <button class="btn btn-sm" id="btn-copy-prompt" type="button">Copiază promptul</button>
+      </div>
+    </div>
+    <div class="panel step">
+      <div class="step-num">2</div>
+      <h3>Lipește rezultatul aici</h3>
+      <p>Copiază CSV-ul primit de la Claude și folosește-l ca să creezi o comandă nouă mai jos, sau ca să adaugi o livrare pe o comandă existentă. Aplicația face potrivirea automat, pe cod de piesă.</p>
+      <p class="note">⚠ Datele stau doar în această pagină — apasă <strong>Salvează progres</strong> înainte să închizi, ca să nu pierzi ce ai introdus.</p>
+    </div>
+  </section>
+
+  <section id="tiles-section"></section>
+
+  <section class="panel form-panel">
+    <div class="section-head">
+      <h2>Comandă nouă</h2>
+    </div>
+    <div class="form-row" style="gap:12px; align-items:flex-start;">
+      <div class="field" style="flex:1; min-width:220px;">
+        <label for="new-order-name">Denumire comandă</label>
+        <input type="text" id="new-order-name" placeholder="ex: PO-4471 · Bosch România" />
+      </div>
+    </div>
+    <div class="field">
+      <label for="new-order-csv">Linii comandă (CSV de la Claude)</label>
+      <textarea id="new-order-csv" class="mono" placeholder="cod_piesa,denumire,cantitate_comandata&#10;BR-1042,Placute frana fata,120&#10;FL-0093,Filtru ulei,300"></textarea>
+      <p class="hint">Format așteptat: <code>cod_piesa,denumire,cantitate_comandata</code> — un rând de titlu e opțional, îl ignorăm automat.</p>
+    </div>
+    <div class="form-row">
+      <button class="btn btn-primary" id="btn-create-order" type="button">Creează comanda</button>
+      <span class="note" id="create-order-msg"></span>
+    </div>
+  </section>
+
+  <section>
+    <div class="section-head" style="margin-bottom:12px;">
+      <h2>Comenzile tale</h2>
+      <span class="count" id="orders-count"></span>
+    </div>
+    <div class="orders" id="orders-list"></div>
+  </section>
+
+  <footer class="hint-footer">Tracker local · datele rămân doar în această pagină până le salvezi ca fișier.</footer>
+</div>
+
+<div id="toasts"></div>
+
+<script>
+(function () {
+  "use strict";
+
+  var PROMPT_ORDER_AND_INVOICE =
+    "Ești un asistent care extrage linii de piese auto dintr-un document (comandă de achiziție sau " +
+    "factură de livrare). Atașat găsești documentul. Extrage TOATE liniile de piese și dă-mi rezultatul " +
+    "STRICT ca CSV (fără text explicativ înainte sau după), cu virgulă ca separator, o linie de titlu, apoi datele:\n\n" +
+    "Dacă documentul este o COMANDĂ (purchase order):\n" +
+    "cod_piesa,denumire,cantitate_comandata\n\n" +
+    "Dacă documentul este o FACTURĂ de livrare:\n" +
+    "cod_piesa,denumire,cantitate_livrata,nr_factura,data\n\n" +
+    "Reguli: cod_piesa exact ca în document (fără spații în plus); cantitate ca număr întreg, fără text; " +
+    "dacă denumirea conține virgulă, pune-o între ghilimele; dacă nu găsești un cod de piesă explicit, " +
+    "folosește codul intern/SKU din document. Nu adăuga alte coloane și nu rezuma — vreau toate liniile.";
+
+  var state = { orders: [] };
+  var els = {};
+
+  function $(id) { return document.getElementById(id); }
+
+  function uid() {
+    return (crypto.randomUUID ? crypto.randomUUID() : "id-" + Date.now() + "-" + Math.random().toString(16).slice(2));
+  }
+
+  function escapeHtml(s) {
+    return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) {
+      return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+    });
+  }
+
+  function showToast(msg, isError) {
+    var t = document.createElement("div");
+    t.className = "toast" + (isError ? " err" : "");
+    t.textContent = msg;
+    $("toasts").appendChild(t);
+    setTimeout(function () {
+      t.remove();
+    }, 4200);
+  }
+
+  // ---- CSV parsing (tolerant: handles quoted fields, ignores a header row) ----
+  function parseCsvLine(line) {
+    var out = [];
+    var cur = "";
+    var inQuotes = false;
+    for (var i = 0; i < line.length; i++) {
+      var c = line[i];
+      if (inQuotes) {
+        if (c === '"') {
+          if (line[i + 1] === '"') { cur += '"'; i++; }
+          else { inQuotes = false; }
+        } else { cur += c; }
+      } else {
+        if (c === '"') { inQuotes = true; }
+        else if (c === ",") { out.push(cur); cur = ""; }
+        else { cur += c; }
+      }
+    }
+    out.push(cur);
+    return out.map(function (s) { return s.trim(); });
+  }
+
+  function parseCsv(text) {
+    var lines = String(text || "").split(/\r?\n/).map(function (l) { return l; }).filter(function (l) { return l.trim() !== ""; });
+    var rows = lines.map(parseCsvLine);
+    if (rows.length && /cod/i.test(rows[0][0] || "")) {
+      rows = rows.slice(1);
+    }
+    return rows;
+  }
+
+  // ---- domain logic ----
+  function newOrderFromCsv(name, csvText) {
+    var rows = parseCsv(csvText);
+    var lines = [];
+    var byCod = {};
+    rows.forEach(function (r) {
+      var cod = r[0], denumire = r[1], qty = parseInt(r[2], 10);
+      if (!cod || isNaN(qty)) return;
+      var key = cod.toLowerCase();
+      if (byCod[key]) {
+        // Cod de piesă deja văzut pe această comandă (posibil livrare în tranșe
+        // pe același PO) — adunăm cantitatea în loc să creăm o linie duplicată,
+        // ca să nu se rupă potrivirea livrărilor ulterioare (care ia doar prima linie găsită).
+        byCod[key].comandat += qty;
+        return;
+      }
+      var line = { id: uid(), cod: cod, denumire: denumire || "", comandat: qty, livrari: [] };
+      byCod[key] = line;
+      lines.push(line);
+    });
+    if (!lines.length) return null;
+    return { id: uid(), name: name || "Comandă fără nume", createdAt: Date.now(), lines: lines };
+  }
+
+  function lineDelivered(line) {
+    return line.livrari.reduce(function (sum, d) { return sum + d.cantitate; }, 0);
+  }
+
+  function lineStatus(line) {
+    var delivered = lineDelivered(line);
+    if (delivered > line.comandat) return "danger";
+    if (delivered === 0) return "pending";
+    if (delivered === line.comandat) return "ok";
+    return "warn";
+  }
+
+  function statusLabel(status) {
+    return { ok: "Complet", warn: "Parțial", pending: "Neînceput", danger: "Peste comandă" }[status];
+  }
+
+  function addDeliveryToOrder(order, csvText) {
+    var rows = parseCsv(csvText);
+    var matched = 0;
+    var unmatched = [];
+    rows.forEach(function (r) {
+      var cod = r[0], denumire = r[1], qty = parseInt(r[2], 10), nrFactura = r[3] || "", data = r[4] || "";
+      if (!cod || isNaN(qty)) return;
+      var line = order.lines.find(function (l) { return l.cod.toLowerCase() === cod.toLowerCase(); });
+      if (line) {
+        line.livrari.push({ cantitate: qty, nrFactura: nrFactura, data: data });
+        matched++;
+      } else {
+        unmatched.push({ cod: cod, denumire: denumire || "", cantitate: qty, nrFactura: nrFactura, data: data });
+      }
+    });
+    return { matched: matched, unmatched: unmatched };
+  }
+
+  // ---- rendering ----
+  function render() {
+    renderTiles();
+    renderOrders();
+  }
+
+  function allLines() {
+    var out = [];
+    state.orders.forEach(function (o) { o.lines.forEach(function (l) { out.push(l); }); });
+    return out;
+  }
+
+  function renderTiles() {
+    var host = $("tiles-section");
+    var lines = allLines();
+    if (!state.orders.length) { host.innerHTML = ""; return; }
+    var counts = { ok: 0, warn: 0, pending: 0, danger: 0 };
+    lines.forEach(function (l) { counts[lineStatus(l)]++; });
+    host.innerHTML =
+      '<div class="tiles">' +
+      '<div class="tile ok"><div class="n">' + counts.ok + '</div><div class="l">Complete</div></div>' +
+      '<div class="tile warn"><div class="n">' + counts.warn + '</div><div class="l">Parțiale</div></div>' +
+      '<div class="tile pending"><div class="n">' + counts.pending + '</div><div class="l">Neîncepute</div></div>' +
+      '<div class="tile danger"><div class="n">' + counts.danger + '</div><div class="l">Peste comandă</div></div>' +
+      '</div>';
+  }
+
+  function renderOrders() {
+    var host = $("orders-list");
+    $("orders-count").textContent = state.orders.length ? (state.orders.length + (state.orders.length === 1 ? " comandă" : " comenzi")) : "";
+
+    if (!state.orders.length) {
+      host.innerHTML = '<div class="panel empty">Nu ai nicio comandă încă. Creeaz-o mai sus, cu CSV-ul extras de Claude din PO.</div>';
+      return;
+    }
+
+    var sorted = state.orders.slice().sort(function (a, b) { return b.createdAt - a.createdAt; });
+
+    host.innerHTML = sorted.map(function (order, idx) {
+      var counts = { ok: 0, warn: 0, pending: 0, danger: 0 };
+      order.lines.forEach(function (l) { counts[lineStatus(l)]++; });
+      var dateStr = new Date(order.createdAt).toLocaleDateString("ro-RO", { day: "2-digit", month: "short", year: "numeric" });
+
+      var rowsHtml = order.lines.map(function (line) {
+        var status = lineStatus(line);
+        var delivered = lineDelivered(line);
+        var remaining = line.comandat - delivered;
+        var histRows = line.livrari.map(function (d) {
+          return '<div class="row"><span>' + escapeHtml(d.nrFactura || "fără nr.") + (d.data ? " · " + escapeHtml(d.data) : "") + '</span><span class="mono">' + d.cantitate + ' buc</span></div>';
+        }).join("");
+        return (
+          '<tr>' +
+          '<td class="mono">' + escapeHtml(line.cod) + '</td>' +
+          '<td class="part-name">' + escapeHtml(line.denumire) + '</td>' +
+          '<td class="qty-cell mono">' + line.comandat + '</td>' +
+          '<td class="qty-cell mono">' + delivered + '</td>' +
+          '<td class="qty-cell mono">' + (remaining < 0 ? ("+" + Math.abs(remaining)) : remaining) + '</td>' +
+          '<td><span class="chip ' + status + '"><span class="dot"></span>' + statusLabel(status) + '</span>' +
+          (line.livrari.length ? ' <button class="hist-toggle" data-toggle-hist="' + line.id + '" type="button">istoric (' + line.livrari.length + ')</button>' : '') +
+          '</td>' +
+          '</tr>' +
+          (line.livrari.length ? '<tr class="hist-row hidden" data-hist-row="' + line.id + '"><td colspan="6"><div class="hist-list">' + histRows + '</div></td></tr>' : '')
+        );
+      }).join("");
+
+      return (
+        '<details class="panel order-card"' + (idx === 0 ? " open" : "") + '>' +
+        '<summary>' +
+        '<div class="order-title"><span class="chev">▸</span><div><h3>' + escapeHtml(order.name) + '</h3>' +
+        '<div class="order-meta">creată ' + dateStr + ' · ' + order.lines.length + ' linii</div></div></div>' +
+        '<div class="order-stats">' +
+        (counts.danger ? '<span class="chip danger"><span class="dot"></span>' + counts.danger + '</span>' : '') +
+        (counts.warn ? '<span class="chip warn"><span class="dot"></span>' + counts.warn + '</span>' : '') +
+        (counts.pending ? '<span class="chip pending"><span class="dot"></span>' + counts.pending + '</span>' : '') +
+        (counts.ok ? '<span class="chip ok"><span class="dot"></span>' + counts.ok + '</span>' : '') +
+        '</div>' +
+        '</summary>' +
+        '<div class="order-body">' +
+        '<div class="add-delivery">' +
+        '<strong style="font-size:13px;">Adaugă livrare (CSV factură de la Claude)</strong>' +
+        '<div class="form-row">' +
+        '<textarea class="mono" data-delivery-input="' + order.id + '" rows="3" placeholder="cod_piesa,denumire,cantitate_livrata,nr_factura,data"></textarea>' +
+        '<button class="btn btn-primary" data-add-delivery="' + order.id + '" type="button">Adaugă</button>' +
+        '</div>' +
+        '<div data-delivery-msg="' + order.id + '"></div>' +
+        '</div>' +
+        '<div class="table-scroll"><table><thead><tr>' +
+        '<th>Cod</th><th>Denumire</th><th class="qty-cell">Comandat</th><th class="qty-cell">Livrat</th><th class="qty-cell">Rămas</th><th>Status</th>' +
+        '</tr></thead><tbody>' + rowsHtml + '</tbody></table></div>' +
+        '</div>' +
+        '</details>'
+      );
+    }).join("");
+  }
+
+  // ---- events ----
+  function wireStaticEvents() {
+    $("prompt-text").value = PROMPT_ORDER_AND_INVOICE;
+
+    $("btn-copy-prompt").addEventListener("click", function () {
+      var text = PROMPT_ORDER_AND_INVOICE;
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(function () {
+          showToast("Prompt copiat — lipește-l în Claude.");
+        }, function () {
+          $("prompt-text").select();
+          showToast("Nu am putut copia automat — am selectat textul, folosește Ctrl+C.");
+        });
+      } else {
+        $("prompt-text").select();
+        showToast("Selectează textul de mai sus și copiază-l cu Ctrl+C.");
+      }
+    });
+
+    $("btn-create-order").addEventListener("click", function () {
+      var name = $("new-order-name").value.trim();
+      var csv = $("new-order-csv").value;
+      var order = newOrderFromCsv(name, csv);
+      var msg = $("create-order-msg");
+      if (!order) {
+        msg.textContent = "N-am găsit linii valide în CSV. Verifică formatul: cod_piesa,denumire,cantitate_comandata.";
+        msg.style.color = "var(--danger)";
+        return;
+      }
+      state.orders.push(order);
+      $("new-order-name").value = "";
+      $("new-order-csv").value = "";
+      msg.textContent = "";
+      render();
+      showToast('Comanda "' + order.name + '" a fost creată cu ' + order.lines.length + ' linii.');
+    });
+
+    $("btn-save").addEventListener("click", function () {
+      if (!window.claude || !window.claude.downloads) {
+        showToast("Salvarea nu e disponibilă în acest mediu.", true);
+        return;
+      }
+      var json = JSON.stringify(state, null, 2);
+      var d = new Date();
+      var stamp = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+      window.claude.downloads.save({ filename: "tracker-livrari-" + stamp + ".json", data: json }).then(function () {
+        showToast("Salvat. Data viitoare foloseste „Încarcă progres” cu acest fișier.");
+      }, function (err) {
+        if (err && err.code === "declined") { return; }
+        showToast("Nu am putut salva: " + (err && err.message ? err.message : "eroare necunoscută"), true);
+      });
+    });
+
+    $("btn-load").addEventListener("click", function () { $("file-load").click(); });
+    $("file-load").addEventListener("change", function (e) {
+      var file = e.target.files && e.target.files[0];
+      if (!file) return;
+      var reader = new FileReader();
+      reader.onload = function () {
+        try {
+          var data = JSON.parse(reader.result);
+          if (!data || !Array.isArray(data.orders)) throw new Error("format invalid");
+          state = data;
+          render();
+          showToast("Progres încărcat: " + state.orders.length + " comenzi.");
+        } catch (err) {
+          showToast("Fișierul nu pare un progres salvat de aici — verifică-l.", true);
+        }
+      };
+      reader.readAsText(file);
+      e.target.value = "";
+    });
+  }
+
+  function wireDynamicEvents() {
+    document.addEventListener("click", function (e) {
+      var histBtn = e.target.closest("[data-toggle-hist]");
+      if (histBtn) {
+        var id = histBtn.getAttribute("data-toggle-hist");
+        var row = document.querySelector('[data-hist-row="' + id + '"]');
+        if (row) row.classList.toggle("hidden");
+        return;
+      }
+      var addBtn = e.target.closest("[data-add-delivery]");
+      if (addBtn) {
+        var orderId = addBtn.getAttribute("data-add-delivery");
+        var order = state.orders.find(function (o) { return o.id === orderId; });
+        var input = document.querySelector('[data-delivery-input="' + orderId + '"]');
+        var msgHost = document.querySelector('[data-delivery-msg="' + orderId + '"]');
+        if (!order || !input) return;
+        var result = addDeliveryToOrder(order, input.value);
+        if (!result.matched && !result.unmatched.length) {
+          msgHost.innerHTML = '<p class="note" style="color:var(--danger);margin-top:6px;">N-am găsit linii valide în CSV.</p>';
+          return;
+        }
+        input.value = "";
+        render();
+        if (result.unmatched.length) {
+          var host = document.querySelector('[data-delivery-msg="' + orderId + '"]');
+          if (host) {
+            host.innerHTML = '<div class="banner warn" style="margin-top:8px;">' +
+              '<span>⚠</span><div><strong>' + result.unmatched.length + ' cod(uri) nu se potrivesc cu nicio linie din comandă</strong> — posibil piesă înlocuitoare sau cod greșit pe factură.' +
+              '<ul>' + result.unmatched.map(function (u) {
+                return '<li class="unmatched-row"><span>' + escapeHtml(u.cod) + ' — ' + escapeHtml(u.denumire) + ' (' + u.cantitate + ' buc)</span></li>';
+              }).join("") + '</ul></div></div>';
+          }
+        }
+        showToast(result.matched + " linii actualizate" + (result.unmatched.length ? ", " + result.unmatched.length + " nepotrivite" : "") + ".");
+      }
+    });
+  }
+
+  wireStaticEvents();
+  wireDynamicEvents();
+  render();
+})();
+</script>
