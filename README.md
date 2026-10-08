@@ -56,7 +56,7 @@ The interface is available in English and Romanian. The **EN / RO** button in th
 
 **With your own files:**
 
-1. Press **Create new order**. A window lists the columns the file must contain — *part code* and *quantity* are required, *description* is optional — and the accepted formats (Excel `.xlsx` / `.xls` and CSV). Choose the file from your folder, check the preview, name the order, confirm. It appears under **Active orders**. If a required column is missing, the page says which one and lets you pick the right column.
+1. Press **Create new order**. A window lists the columns the file must contain — *part code* and *quantity* are required, *description* is optional — and the accepted formats (Excel `.xlsx` / `.xls` and CSV). Choose the file from your folder, give the order a name (it defaults to the file name), check the preview and press **Save order**. It appears under **Active orders**. If a required column is missing, the page says which one and lets you pick the right column.
 2. When a partial delivery arrives, press **Extract data from a partial invoice** inside that order and choose the file: the invoice is added to that order automatically (Excel or CSV; PDFs and photos are not read yet). The invoice number is taken from a column in the file, or from the file name if there is none — it is what stops the same invoice being counted twice. A duplicate invoice is flagged and skipped; a mistaken one can be removed.
 
 ## What's next

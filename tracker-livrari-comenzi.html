@@ -550,6 +550,7 @@
       demoHint: "Apasă „Încarcă” ca să adaugi o factură parțială pe această comandă.",
       demoTitle: "Facturi parțiale demo, gata de încărcat",
       impChangeCols: "Verifică sau schimbă coloanele",
+      impNoHeaders: "Nu am recunoscut titlurile coloanelor, așa că fișierul nu pare o comandă sau o factură. Verifică dacă e fișierul potrivit; dacă este, alege tu coloanele de mai jos (obligatorii: {fields}).",
       impMissing: "Lipsește câmpul obligatoriu: {fields}. Alege coloana potrivită mai jos sau verifică fișierul.",
       impPick: "Alege fișier din folder",
       impPickOther: "Alege alt fișier",
@@ -567,16 +568,17 @@
       impReadError: "Nu am putut citi fișierul: {err}",
       impCancel: "Anulează",
       impConfirmInvoice: "Adaugă factura",
-      impConfirmOrder: "Creează comanda",
+      impConfirmOrder: "Salvează comanda",
       impNoRows: "Nu am găsit nicio linie validă. Verifică alegerea coloanelor.",
       impMore: "… și încă {n} linii.",
-      impSkipped: "{n} rânduri ignorate (fără cod sau cantitate)",
-      impPreview: "Previzualizare: {n} linii valide",
+      impSkipped: "rânduri ignorate (fără cod sau cantitate): {n}",
+      impPreview: "Previzualizare — linii valide: {n}",
       impInvDate: "Data facturii (opțional)",
       impInvFromCol: "Se ia din coloana aleasă mai sus.",
       impInvNrHint: "Obligatoriu: numărul facturii e cel care oprește dublarea.",
       impInvNr: "Număr factură",
-      impOrderName: "Denumirea comenzii",
+      impOrderName: "Numele comenzii",
+      impOrderNameHint: "Dă-i un nume ușor de recunoscut, de exemplu PO-4471 · Bosch. Dacă îl lași gol, folosim numele fișierului.",
       impColumn: "Coloana {n}",
       impNone: "— nicio coloană —",
       impColDate: "Data",
@@ -653,6 +655,7 @@
       demoHint: "Press “Upload” to add a partial invoice to this order.",
       demoTitle: "Demo partial invoices, ready to upload",
       impChangeCols: "Check or change the columns",
+      impNoHeaders: "I didn't recognise the column headers, so this file doesn't look like an order or an invoice. Check it is the right file; if it is, pick the columns yourself below (required: {fields}).",
       impMissing: "Required field missing: {fields}. Pick the right column below or check the file.",
       impPick: "Choose file from folder",
       impPickOther: "Choose another file",
@@ -670,16 +673,17 @@
       impReadError: "Couldn't read the file: {err}",
       impCancel: "Cancel",
       impConfirmInvoice: "Add invoice",
-      impConfirmOrder: "Create order",
+      impConfirmOrder: "Save order",
       impNoRows: "No valid lines found. Check the column selection.",
       impMore: "… and {n} more lines.",
-      impSkipped: "{n} rows ignored (no code or quantity)",
-      impPreview: "Preview: {n} valid lines",
+      impSkipped: "rows ignored (no code or quantity): {n}",
+      impPreview: "Preview — valid lines: {n}",
       impInvDate: "Invoice date (optional)",
       impInvFromCol: "Taken from the column chosen above.",
       impInvNrHint: "Required: the invoice number is what prevents duplicates.",
       impInvNr: "Invoice number",
       impOrderName: "Order name",
+      impOrderNameHint: "Give it an easy-to-recognise name, e.g. PO-4471 · Bosch. If you leave it empty, we use the file name.",
       impColumn: "Column {n}",
       impNone: "— no column —",
       impColDate: "Date",
@@ -1326,6 +1330,7 @@
   function detectForSheet(ctx) {
     var rows = ctx.sheets[ctx.sheetIdx].rows;
     ctx.headerRow = -1;
+    ctx.noHeaders = false;
     ctx.map = { cod: -1, qty: -1, name: -1, nr: -1, date: -1 };
     var partial = null;
     for (var r = 0; r < Math.min(rows.length, 25); r++) {
@@ -1337,11 +1342,9 @@
       if (!partial && found >= 2) partial = { row: r, map: m };
     }
     if (partial) { ctx.headerRow = partial.row; ctx.map = partial.map; return; }
-    // Fără titluri recunoscute: presupunem coloanele în ordinea cod, denumire, cantitate, (nr. factură, dată).
-    // Omul le poate corecta; dacă nu se potrivesc, previzualizarea o arată imediat.
-    var n = sheetCols(ctx);
-    ctx.map = { cod: 0, name: n > 2 ? 1 : -1, qty: n > 2 ? 2 : Math.min(1, n - 1), nr: -1, date: -1 };
-    if (ctx.mode === "invoice") { ctx.map.nr = n > 3 ? 3 : -1; ctx.map.date = n > 4 ? 4 : -1; }
+    // Niciun titlu recunoscut: NU ghicim coloanele. Un tabel oarecare (de exemplu o listă de întreținere)
+    // ar fi luat drept comandă. Omul verifică fișierul sau alege singur coloanele.
+    ctx.noHeaders = true;
   }
 
   function sheetCols(ctx) {
@@ -1471,23 +1474,25 @@
     var missing = missingFields(ctx);
     html += '<p class="imp-file">' + escapeHtml(t("impFile", { name: ctx.fileName })) +
       ' <button class="link-btn" type="button" data-imp-pick>' + t("impPickOther") + '</button></p>';
+    if (!inv) {
+      html += '<div class="field"><label>' + t("impOrderName") + '</label>' +
+        '<input type="text" data-imp-text="orderName" value="' + escapeHtml(ctx.orderName) + '">' +
+        '<p class="hint">' + t("impOrderNameHint") + '</p></div>';
+    }
     if (ctx.sheets.length > 1) {
       html += '<div class="field"><label>' + t("impSheet") + '</label><select data-imp-sheet>' +
         ctx.sheets.map(function (s, i) {
           return '<option value="' + i + '"' + (i === ctx.sheetIdx ? " selected" : "") + '>' + escapeHtml(s.name) + '</option>';
         }).join("") + '</select></div>';
     }
-    if (missing.length) html += '<p class="imp-warn">' + escapeHtml(t("impMissing", { fields: missing.join(", ") })) + '</p>';
+    if (missing.length) html += '<p class="imp-warn">' + escapeHtml(t(ctx.noHeaders ? "impNoHeaders" : "impMissing", { fields: missing.join(", ") })) + '</p>';
     html += '<details class="imp-cols"' + (missing.length ? " open" : "") + '><summary>' + t("impChangeCols") + '</summary><div class="imp-grid">' +
       mapSelect(ctx, "cod", t("impColCode")) +
       mapSelect(ctx, "name", t("impColName")) +
       mapSelect(ctx, "qty", t(inv ? "impColQtyDel" : "impColQty")) +
       (inv ? mapSelect(ctx, "nr", t("impColInv")) + mapSelect(ctx, "date", t("impColDate")) : "") +
       '</div></details>';
-    if (!inv) {
-      html += '<div class="field"><label>' + t("impOrderName") + '</label>' +
-        '<input type="text" data-imp-text="orderName" value="' + escapeHtml(ctx.orderName) + '"></div>';
-    } else {
+    if (inv) {
       html += '<div class="imp-grid">' +
         '<div class="field"><label>' + t("impInvNr") + '</label>' +
         '<input type="text" data-imp-text="invNr" value="' + escapeHtml(ctx.invNr) + '"' + (ctx.map.nr >= 0 ? " disabled" : "") + '>' +
@@ -1566,7 +1571,7 @@
     if (!ex.rows.length || missingFields(ctx).length) return;
     if (ctx.mode === "order") {
       var csv = "cod_piesa,denumire,cantitate_comandata\n" + ex.rows.map(function (r) { return toCsvLine([r.cod, r.name, r.qty]); }).join("\n");
-      var order = newOrderFromCsv((ctx.orderName || "").trim(), csv);
+      var order = newOrderFromCsv((ctx.orderName || "").trim() || stripExt(ctx.fileName), csv);
       if (!order) return;
       state.orders.push(order);
       closeImport();
