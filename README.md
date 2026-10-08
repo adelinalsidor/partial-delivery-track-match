@@ -52,7 +52,7 @@ The interface is available in English and Romanian. The **EN / RO** button in th
 
 ## Usage
 
-1. Open `tracker-livrari-comenzi.html` in a browser, or click **Încearcă cu un exemplu** to see a sample order with partial, complete and over-delivered lines.
+1. Open `tracker-livrari-comenzi.html` in a browser, or click **Try with an example** (*Încearcă cu un exemplu*). It creates one demo order and a panel with two partial invoices ready to upload: upload them one by one to watch the statuses change (complete, partial, over-delivered, unknown code), then press the same one again to see the duplicate protection. Pressing the example button again resets the demo.
 2. Copy the extraction prompt from Step 1, paste it into a Claude conversation along with your PO or invoice file.
 3. Paste the resulting CSV into **Comandă nouă** to create an order, or into an existing order's **Adaugă livrare** to log a delivery.
 

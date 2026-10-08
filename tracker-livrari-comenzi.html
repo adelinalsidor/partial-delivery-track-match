@@ -319,6 +319,27 @@
   .chip.danger { background: var(--low); color: #fff; }
   .chip.danger .dot { background: #fff; }
 
+  /* panou demo: facturile parțiale gata de încărcat */
+  .demo-invoices { border: 1px solid var(--line); border-left: 6px solid var(--primary); background: var(--soft); padding: 12px 16px; }
+  .demo-invoices > strong { font-size: 13px; }
+  .demo-invoices .note { margin: 4px 0 10px; }
+  .demo-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 10px; }
+  .demo-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    padding: 10px 12px;
+    font-size: 13px;
+  }
+  .demo-card .inv-nr { font-weight: 600; }
+  .demo-card .inv-date, .demo-card .inv-sum { color: var(--muted); }
+  .demo-actions { display: flex; align-items: center; gap: 8px; }
+  .order-footer { display: flex; justify-content: flex-end; }
+
   /* facturi parțiale încărcate */
   .invoices { border: 1px solid var(--line); background: var(--surface); padding: 12px 16px; }
   .invoices > strong { font-size: 13px; }
@@ -592,7 +613,15 @@
       saved: "Fișier descărcat. Data viitoare folosește „Încarcă progres” cu el.",
       loaded: "Progres încărcat — comenzi: {n}.",
       badFile: "Fișierul nu pare un progres salvat de aici — verifică-l.",
-      demoLoaded: "Exemplu încărcat: o comandă cu livrări complete, parțiale, în plus și neînceput.",
+      demoLoaded: "Exemplu încărcat: comanda PO-4471, încă fără facturi. Încarcă cele două facturi demo din panoul de mai jos.",
+      demoTitle: "Facturi demo, gata de încărcat",
+      demoHint: "Apasă „Încarcă” ca să adaugi o factură parțială pe comandă. Apasă încă o dată pe aceeași, ca să vezi ce se întâmplă când o dublezi.",
+      demoUpload: "Încarcă",
+      demoUploadAgain: "Încarcă din nou (dublură)",
+      demoLoadedTag: "încărcată",
+      deleteOrder: "Șterge comanda",
+      confirmDeleteOrder: 'Ștergi comanda "{name}" cu toate facturile ei? Nu se poate anula.',
+      orderDeleted: 'Comanda "{name}" a fost ștearsă.',
       linesUpdated: "Linii actualizate: {n}",
       unmatchedSuffix: ", {n} nepotrivite",
       unmatchedTitle: "{n} cod(uri) nu se potrivesc cu nicio linie din comandă",
@@ -684,7 +713,15 @@
       saved: "File downloaded. Next time, use “Load progress” with it.",
       loaded: "Progress loaded — orders: {n}.",
       badFile: "This file doesn't look like progress saved from here — please check it.",
-      demoLoaded: "Example loaded: one order with complete, partial, over-delivered and not-started lines.",
+      demoLoaded: "Example loaded: order PO-4471, no invoices yet. Upload the two demo invoices from the panel below.",
+      demoTitle: "Demo invoices, ready to upload",
+      demoHint: "Press “Upload” to add a partial invoice to the order. Press the same one again to see what happens when you duplicate it.",
+      demoUpload: "Upload",
+      demoUploadAgain: "Upload again (duplicate)",
+      demoLoadedTag: "uploaded",
+      deleteOrder: "Delete order",
+      confirmDeleteOrder: 'Delete order "{name}" and all its invoices? This cannot be undone.',
+      orderDeleted: 'Order "{name}" was deleted.',
       linesUpdated: "Lines updated: {n}",
       unmatchedSuffix: ", {n} unmatched",
       unmatchedTitle: "{n} code(s) don't match any line on the order",
@@ -959,6 +996,16 @@
       return;
     }
 
+    // Păstrăm ce comenzi erau deschise: redesenarea nu trebuie să le închidă.
+    // O comandă nouă (care nu era în pagină) se deschide dacă e prima din listă.
+    var existed = {};
+    var wasOpen = {};
+    host.querySelectorAll("details.order-card").forEach(function (d) {
+      var oid = d.getAttribute("data-order-id");
+      existed[oid] = true;
+      if (d.open) wasOpen[oid] = true;
+    });
+
     var sorted = state.orders.slice().sort(function (a, b) { return b.createdAt - a.createdAt; });
 
     host.innerHTML = sorted.map(function (order, idx) {
@@ -989,7 +1036,7 @@
       }).join("");
 
       return (
-        '<details class="panel order-card"' + (idx === 0 ? " open" : "") + '>' +
+        '<details class="panel order-card" data-order-id="' + order.id + '"' + ((existed[order.id] ? wasOpen[order.id] : idx === 0) ? " open" : "") + '>' +
         '<summary>' +
         '<div class="order-title"><span class="chev">▸</span><div><h3>' + escapeHtml(order.name) + '</h3>' +
         '<div class="order-meta">' + t("orderMeta", { date: dateStr, lines: linesLabel(order.lines.length), inv: invoiceCountLabel(order) }) + '</div></div></div>' +
@@ -1001,6 +1048,7 @@
         '</div>' +
         '</summary>' +
         '<div class="order-body">' +
+        demoPanelHtml(order) +
         '<div class="add-delivery">' +
         '<strong style="font-size:13px;">' + t("addDeliveryTitle") + '</strong>' +
         '<div class="form-row">' +
@@ -1013,6 +1061,7 @@
         '<div class="table-scroll"><table><thead><tr>' +
         '<th>' + t("thCode") + '</th><th>' + t("thName") + '</th><th class="qty-cell">' + t("thOrdered") + '</th><th class="qty-cell">' + t("thDelivered") + '</th><th class="qty-cell">' + t("thRemaining") + '</th><th>' + t("thStatus") + '</th>' +
         '</tr></thead><tbody>' + rowsHtml + '</tbody></table></div>' +
+        '<div class="order-footer"><button class="btn btn-sm btn-ghost" type="button" data-delete-order="' + order.id + '">' + t("deleteOrder") + '</button></div>' +
         '</div>' +
         '</details>'
       );
@@ -1079,22 +1128,16 @@
     });
 
     $("btn-demo").addEventListener("click", function () {
-      var p1 = t("demoPart1"), p2 = t("demoPart2"), p3 = t("demoPart3"), p4 = t("demoPart4"), p5 = t("demoPart5");
       var order = newOrderFromCsv(t("demoOrderName"),
         "cod_piesa,denumire,cantitate_comandata\n" +
-        "BR-1042," + p1 + ",120\n" +
-        "FL-0093," + p2 + ",300\n" +
-        "SP-2210," + p3 + ",200\n" +
-        "AM-5518," + p4 + ",40");
-      addDeliveryToOrder(order,
-        "cod_piesa,denumire,cantitate_livrata,nr_factura,data\n" +
-        "BR-1042," + p1 + ",120,FA-9001,2026-09-12\n" +
-        "FL-0093," + p2 + ",180,FA-9001,2026-09-12\n" +
-        "SP-2210," + p3 + ",220,FA-9001,2026-09-12\n" +
-        "XX-0001," + p5 + ",10,FA-9001,2026-09-12");
-      addDeliveryToOrder(order,
-        "cod_piesa,denumire,cantitate_livrata,nr_factura,data\n" +
-        "FL-0093," + p2 + ",60,FA-9042,2026-09-26");
+        "BR-1042," + t("demoPart1") + ",120\n" +
+        "FL-0093," + t("demoPart2") + ",300\n" +
+        "SP-2210," + t("demoPart3") + ",200\n" +
+        "AM-5518," + t("demoPart4") + ",40");
+      order.demo = true;
+      // O singură comandă demo: apăsarea din nou o resetează, nu adaugă o copie
+      // (scoate și copiile vechi create înainte să existe marcajul "demo").
+      state.orders = state.orders.filter(function (o) { return !o.demo && !/^DEMO · /.test(o.name); });
       state.orders.push(order);
       render();
       showToast(t("demoLoaded"));
@@ -1121,6 +1164,83 @@
     });
   }
 
+  // Facturile parțiale demo: stau într-un panou în comanda demo, ca vizitatorul să le încarce
+  // (și să le dubleze) cu un click, fără să lipească nimic.
+  var DEMO_INVOICES = [
+    { nr: "FA-9001", data: "2026-09-12", rows: [["BR-1042", "demoPart1", 120], ["FL-0093", "demoPart2", 180], ["SP-2210", "demoPart3", 220], ["XX-0001", "demoPart5", 10]] },
+    { nr: "FA-9042", data: "2026-09-26", rows: [["FL-0093", "demoPart2", 60], ["AM-5518", "demoPart4", 25]] }
+  ];
+
+  function demoInvoiceCsv(i) {
+    var inv = DEMO_INVOICES[i];
+    return "cod_piesa,denumire,cantitate_livrata,nr_factura,data\n" + inv.rows.map(function (r) {
+      return r[0] + "," + t(r[1]) + "," + r[2] + "," + inv.nr + "," + inv.data;
+    }).join("\n");
+  }
+
+  function demoPanelHtml(order) {
+    if (!order.demo) return "";
+    var loaded = {};
+    orderInvoices(order).forEach(function (g) { loaded[g.key] = true; });
+    var cards = DEMO_INVOICES.map(function (inv, i) {
+      var pcs = inv.rows.reduce(function (s, r) { return s + r[2]; }, 0);
+      var isLoaded = !!loaded["n:" + normNr(inv.nr)];
+      return '<div class="demo-card">' +
+        '<div><span class="mono inv-nr">' + inv.nr + '</span> <span class="inv-date">' + inv.data + '</span>' +
+        '<div class="inv-sum">' + t("invoiceLines", { lines: linesLabel(inv.rows.length), pcs: pcs }) + '</div></div>' +
+        '<div class="demo-actions">' +
+        (isLoaded ? '<span class="chip ok"><span class="dot"></span>' + t("demoLoadedTag") + '</span>' : '') +
+        '<button class="btn btn-sm btn-primary" type="button" data-demo-invoice="' + i + '" data-demo-order="' + order.id + '">' + t(isLoaded ? "demoUploadAgain" : "demoUpload") + '</button>' +
+        '</div></div>';
+    }).join("");
+    return '<div class="demo-invoices"><strong>' + t("demoTitle") + '</strong>' +
+      '<p class="note">' + t("demoHint") + '</p><div class="demo-cards">' + cards + '</div></div>';
+  }
+
+  // Adaugă o factură (text CSV) pe o comandă. Același drum pentru caseta de lipire și pentru facturile demo.
+  function submitDelivery(orderId, text) {
+    var order = state.orders.find(function (o) { return o.id === orderId; });
+    if (!order) return;
+    var msgHost = document.querySelector('[data-delivery-msg="' + orderId + '"]');
+    var result = addDeliveryToOrder(order, text);
+    if (!result.matched && !result.unmatched.length && !result.duplicates.length) {
+      if (msgHost) msgHost.innerHTML = '<p class="note" style="color:var(--danger);margin-top:6px;">' + t("noValidLinesDelivery") + '</p>';
+      return;
+    }
+    // Dacă totul a fost duplicat, lăsăm textul în casetă ca să vezi ce ai lipit.
+    var keepText = (result.matched || result.unmatched.length) ? "" : text;
+    render();
+    var newInput = document.querySelector('[data-delivery-input="' + orderId + '"]');
+    if (newInput) newInput.value = keepText;
+
+    var banners = "";
+    if (result.duplicates.length) {
+      var perInvoice = {};
+      result.duplicates.forEach(function (d) { perInvoice[d.nrFactura] = (perInvoice[d.nrFactura] || 0) + 1; });
+      banners += '<div class="banner danger" style="margin-top:8px;">' +
+        '<span>⚠</span><div><strong>' + t("dupTitle", { n: result.duplicates.length }) + '</strong>' + t("dupHint") +
+        '<ul>' + Object.keys(perInvoice).map(function (nr) {
+          return '<li>' + escapeHtml(t("dupRow", { nr: nr, n: perInvoice[nr] })) + '</li>';
+        }).join("") + '</ul></div></div>';
+    }
+    if (result.unmatched.length) {
+      banners += '<div class="banner warn" style="margin-top:8px;">' +
+        '<span>⚠</span><div><strong>' + t("unmatchedTitle", { n: result.unmatched.length }) + '</strong>' + t("unmatchedHint") +
+        '<ul>' + result.unmatched.map(function (u) {
+          return '<li class="unmatched-row"><span>' + escapeHtml(u.cod) + ' — ' + escapeHtml(u.denumire) + ' (' + u.cantitate + ' ' + t("pcs") + ')</span></li>';
+        }).join("") + '</ul></div></div>';
+    }
+    if (result.noNumber) {
+      banners += '<p class="note" style="margin-top:8px;">' + t("noNumberNote", { n: result.noNumber }) + '</p>';
+    }
+    var host = document.querySelector('[data-delivery-msg="' + orderId + '"]');
+    if (host) host.innerHTML = banners;
+
+    showToast(t("linesUpdated", { n: result.matched }) +
+      (result.unmatched.length ? t("unmatchedSuffix", { n: result.unmatched.length }) : "") +
+      (result.duplicates.length ? t("dupSuffix", { n: result.duplicates.length }) : "") + ".");
+  }
+
   function wireDynamicEvents() {
     document.addEventListener("click", function (e) {
       var histBtn = e.target.closest("[data-toggle-hist]");
@@ -1132,48 +1252,24 @@
       }
       var addBtn = e.target.closest("[data-add-delivery]");
       if (addBtn) {
-        var orderId = addBtn.getAttribute("data-add-delivery");
-        var order = state.orders.find(function (o) { return o.id === orderId; });
-        var input = document.querySelector('[data-delivery-input="' + orderId + '"]');
-        var msgHost = document.querySelector('[data-delivery-msg="' + orderId + '"]');
-        if (!order || !input) return;
-        var result = addDeliveryToOrder(order, input.value);
-        if (!result.matched && !result.unmatched.length && !result.duplicates.length) {
-          msgHost.innerHTML = '<p class="note" style="color:var(--danger);margin-top:6px;">' + t("noValidLinesDelivery") + '</p>';
-          return;
-        }
-        // Dacă totul a fost duplicat, lăsăm textul în casetă ca să vezi ce ai lipit.
-        var keepText = (result.matched || result.unmatched.length) ? "" : input.value;
+        var addId = addBtn.getAttribute("data-add-delivery");
+        var inp = document.querySelector('[data-delivery-input="' + addId + '"]');
+        if (inp) submitDelivery(addId, inp.value);
+        return;
+      }
+      var demoBtn = e.target.closest("[data-demo-invoice]");
+      if (demoBtn) {
+        submitDelivery(demoBtn.getAttribute("data-demo-order"), demoInvoiceCsv(parseInt(demoBtn.getAttribute("data-demo-invoice"), 10)));
+        return;
+      }
+      var delBtn = e.target.closest("[data-delete-order]");
+      if (delBtn) {
+        var delId = delBtn.getAttribute("data-delete-order");
+        var delOrder = state.orders.find(function (o) { return o.id === delId; });
+        if (!delOrder || !window.confirm(t("confirmDeleteOrder", { name: delOrder.name }))) return;
+        state.orders = state.orders.filter(function (o) { return o.id !== delId; });
         render();
-        var newInput = document.querySelector('[data-delivery-input="' + orderId + '"]');
-        if (newInput) newInput.value = keepText;
-
-        var banners = "";
-        if (result.duplicates.length) {
-          var perInvoice = {};
-          result.duplicates.forEach(function (d) { perInvoice[d.nrFactura] = (perInvoice[d.nrFactura] || 0) + 1; });
-          banners += '<div class="banner danger" style="margin-top:8px;">' +
-            '<span>⚠</span><div><strong>' + t("dupTitle", { n: result.duplicates.length }) + '</strong>' + t("dupHint") +
-            '<ul>' + Object.keys(perInvoice).map(function (nr) {
-              return '<li>' + escapeHtml(t("dupRow", { nr: nr, n: perInvoice[nr] })) + '</li>';
-            }).join("") + '</ul></div></div>';
-        }
-        if (result.unmatched.length) {
-          banners += '<div class="banner warn" style="margin-top:8px;">' +
-            '<span>⚠</span><div><strong>' + t("unmatchedTitle", { n: result.unmatched.length }) + '</strong>' + t("unmatchedHint") +
-            '<ul>' + result.unmatched.map(function (u) {
-              return '<li class="unmatched-row"><span>' + escapeHtml(u.cod) + ' — ' + escapeHtml(u.denumire) + ' (' + u.cantitate + ' ' + t("pcs") + ')</span></li>';
-            }).join("") + '</ul></div></div>';
-        }
-        if (result.noNumber) {
-          banners += '<p class="note" style="margin-top:8px;">' + t("noNumberNote", { n: result.noNumber }) + '</p>';
-        }
-        var host = document.querySelector('[data-delivery-msg="' + orderId + '"]');
-        if (host) host.innerHTML = banners;
-
-        showToast(t("linesUpdated", { n: result.matched }) +
-          (result.unmatched.length ? t("unmatchedSuffix", { n: result.unmatched.length }) : "") +
-          (result.duplicates.length ? t("dupSuffix", { n: result.duplicates.length }) : "") + ".");
+        showToast(t("orderDeleted", { name: delOrder.name }));
         return;
       }
       var rmBtn = e.target.closest("[data-remove-invoice]");
