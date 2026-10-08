@@ -1,5 +1,7 @@
 # Order Delivery Tracker
 
+**▶ Live demo: [adelinalsidor.github.io/partial-delivery-track-match](https://adelinalsidor.github.io/partial-delivery-track-match/)** — click *Try with an example* (or *Încearcă cu un exemplu*) to see it with sample data. English / Romanian, no sign-up, no server.
+
 A single-page tool for auto parts procurement: reconciles a purchase order against the supplier invoices for each partial delivery, so you always know what's shipped and what's still owed — without doing the math by hand from every invoice.
 
 Built for small procurement teams (auto parts resellers, for example) who don't have — or need — full ERP tooling, just a way to stop losing track of half-delivered orders.
