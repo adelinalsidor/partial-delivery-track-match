@@ -62,9 +62,7 @@
 
   /* selector de limbă, colțul din dreapta sus (selector segmentat din stilul meu) */
   .lang-switch {
-    position: absolute;
-    top: 16px;
-    right: 20px;
+    flex: none;
     display: flex;
     gap: 2px;
     padding: 3px;
@@ -109,8 +107,9 @@
     display: flex;
     align-items: center;
     gap: 12px;
-    margin: 0 0 14px;
+    margin: 0;
   }
+  .toprow { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: -26px; }
   .logo {
     width: 38px;
     height: 38px;
@@ -191,46 +190,6 @@
     background: var(--surface);
     border: 1px solid var(--line);
   }
-
-  /* workflow steps */
-  .steps {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 16px;
-  }
-  @media (max-width: 720px) {
-    .steps { grid-template-columns: 1fr; }
-  }
-  .step {
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 10px;
-  }
-  .step-num {
-    font-family: var(--font-head);
-    font-weight: 600;
-    font-size: 30px;
-    line-height: 1;
-    color: var(--accent);
-  }
-  .step h3 { margin: 0; font-size: 20px; }
-  .step p { margin: 0; color: var(--muted); font-size: 14px; max-width: 60ch; }
-  .prompt-box {
-    position: relative;
-  }
-  .prompt-box textarea {
-    width: 100%;
-    resize: vertical;
-    min-height: 130px;
-    background: var(--paper);
-    border: 1px solid var(--line);
-    color: var(--ink);
-    padding: 10px 12px;
-    font-size: 12px;
-    line-height: 1.5;
-  }
-  .prompt-box .btn { margin-top: 8px; }
 
   /* section headings */
   .section-head {
@@ -319,11 +278,74 @@
   .chip.danger { background: var(--low); color: #fff; }
   .chip.danger .dot { background: #fff; }
 
+  [hidden] { display: none !important; }
+  .head-tools { display: flex; align-items: center; gap: 12px; }
+  .topnote { margin: -20px 0 0; }
+  .empty p { margin: 0 0 14px; max-width: 60ch; margin-left: auto; margin-right: auto; }
+
+  .empty-actions { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .field select, .field input:disabled { font-size: 14px; }
+  .field select {
+    background: var(--paper);
+    border: 1px solid var(--line);
+    color: var(--ink);
+    padding: 10px 12px;
+    width: 100%;
+  }
+  .field input:disabled { opacity: 0.6; }
+
+  /* fereastra de încărcare din Excel / CSV */
+  .import-dialog {
+    border: 1px solid var(--line);
+    border-top: 6px solid var(--primary);
+    background: var(--surface);
+    color: var(--ink);
+    padding: 0;
+    width: min(780px, calc(100% - 32px));
+    max-height: calc(100vh - 48px);
+    overflow: auto;
+  }
+  .import-dialog::backdrop { background: rgba(2, 12, 54, 0.5); }
+  .imp-head { padding: 18px 22px 0; }
+  .imp-head h2 { margin: 0 0 4px; font-size: 22px; }
+  #import-body { padding: 8px 22px 12px; display: flex; flex-direction: column; gap: 12px; }
+  .imp-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
+  .imp-file { margin: 0; color: var(--muted); font-size: 13px; }
+  .imp-sub { margin: 4px 0 0; font-size: 14px; }
+  .imp-muted { color: var(--muted); font-size: 12.5px; }
+  .imp-warn {
+    margin: 0;
+    padding: 8px 12px;
+    border-left: 6px solid var(--mid);
+    background: color-mix(in srgb, var(--mid) 24%, var(--surface));
+    font-size: 13px;
+  }
+  .imp-table { min-width: 0; }
+  .imp-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+    padding: 14px 22px 18px;
+    position: sticky;
+    bottom: 0;
+    background: var(--surface);
+    border-top: 1px solid var(--line);
+  }
+
+  .imp-reqs { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+  .imp-reqs li { padding: 8px 12px; background: var(--paper); border: 1px solid var(--line); }
+  .req, .opt { display: inline-block; padding: 1px 8px; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-left: 6px; }
+  .req { background: var(--primary); color: #fff; }
+  .opt { background: var(--soft); color: var(--muted); }
+  .link-btn { background: none; border: none; padding: 0 0 0 8px; color: var(--primary); font: inherit; font-weight: 600; text-decoration: underline; cursor: pointer; }
+  .imp-cols > summary { cursor: pointer; font-size: 13px; color: var(--muted); }
+  .imp-cols[open] > summary { margin-bottom: 10px; }
+
   /* panou demo: facturile parțiale gata de încărcat */
   .demo-invoices { border: 1px solid var(--line); border-left: 6px solid var(--primary); background: var(--soft); padding: 12px 16px; }
   .demo-invoices > strong { font-size: 13px; }
   .demo-invoices .note { margin: 4px 0 10px; }
-  .demo-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 10px; }
+  .demo-cards { display: flex; flex-direction: column; gap: 8px; }
   .demo-card {
     display: flex;
     justify-content: space-between;
@@ -464,77 +486,51 @@
 
 <div class="wrap">
 
-  <div class="lang-switch" role="group" aria-label="Limba / Language">
-    <button type="button" data-set-lang="ro" aria-pressed="true">RO</button>
-    <button type="button" data-set-lang="en" aria-pressed="false">EN</button>
+  <div class="toprow">
+    <div class="brand">
+      <span class="logo" aria-hidden="true"><i></i></span>
+      <p class="brand-eyebrow" data-i18n="eyebrow">Piese Auto · Aprovizionare</p>
+    </div>
+    <div class="lang-switch" role="group" aria-label="Limba / Language">
+      <button type="button" data-set-lang="ro" aria-pressed="true">RO</button>
+      <button type="button" data-set-lang="en" aria-pressed="false">EN</button>
+    </div>
   </div>
 
   <div class="topbar">
     <div>
-      <div class="brand">
-        <span class="logo" aria-hidden="true"><i></i></span>
-        <p class="brand-eyebrow" data-i18n="eyebrow">Piese Auto · Aprovizionare</p>
-      </div>
       <h1 data-i18n-html="h1"><span class="key">Tracker</span> Livrări Comenzi</h1>
       <p class="sub" data-i18n="sub">Urmărește ce s-a livrat față de ce ai comandat, comandă cu comandă, fără să mai deschizi fiecare factură manual.</p>
     </div>
     <div class="topbar-actions">
-      <button class="btn" id="btn-demo" type="button" data-i18n="btnDemo">Încearcă cu un exemplu</button>
-      <button class="btn" id="btn-load" type="button" data-i18n="btnLoad">Încarcă progres</button>
-      <input type="file" id="file-load" accept="application/json,.json" />
-      <button class="btn btn-primary" id="btn-save" type="button" data-i18n="btnSave">Salvează progres</button>
+      <button class="btn btn-primary" id="btn-import-order" type="button" data-import-order data-i18n="btnImportOrder">Creează comandă nouă</button>
+      <input type="file" id="file-import" accept=".xlsx,.xls,.xlsm,.ods,.csv,.tsv,.txt,text/csv" />
     </div>
   </div>
-
-  <section class="steps">
-    <div class="panel step">
-      <div class="step-num">1</div>
-      <h3 data-i18n="step1Title">Extrage liniile cu Claude</h3>
-      <p data-i18n="step1Text">Deschide o conversație cu Claude, atașează comanda sau factura (PDF, Excel sau poză — orice format ai) și lipește promptul de mai jos. Claude îți întoarce liniile gata formatate.</p>
-      <div class="prompt-box">
-        <textarea id="prompt-text" class="mono" readonly rows="6"></textarea>
-        <button class="btn btn-sm" id="btn-copy-prompt" type="button" data-i18n="copyPrompt">Copiază promptul</button>
-      </div>
-    </div>
-    <div class="panel step">
-      <div class="step-num">2</div>
-      <h3 data-i18n="step2Title">Lipește rezultatul aici</h3>
-      <p data-i18n="step2Text">Copiază CSV-ul primit de la Claude și folosește-l ca să creezi o comandă nouă mai jos, sau ca să adaugi factura unei livrări parțiale pe o comandă existentă. Aplicația face potrivirea automat, pe cod de piesă.</p>
-      <p class="note" data-i18n-html="step2Note">Datele se salvează automat în acest browser. Ca să le muți pe alt calculator sau să ai o copie de siguranță, apasă <strong>Salvează progres</strong>.</p>
-    </div>
-  </section>
-
-  <section class="panel form-panel">
-    <div class="section-head">
-      <h2 data-i18n="newOrderTitle">Comandă nouă</h2>
-    </div>
-    <div class="form-row" style="gap:12px; align-items:flex-start;">
-      <div class="field" style="flex:1; min-width:220px;">
-        <label for="new-order-name" data-i18n="orderNameLabel">Denumire comandă</label>
-        <input type="text" id="new-order-name" data-i18n-ph="orderNamePh" placeholder="ex: PO-4471 · Bosch România" />
-      </div>
-    </div>
-    <div class="field">
-      <label for="new-order-csv" data-i18n="orderCsvLabel">Linii comandă (CSV de la Claude)</label>
-      <textarea id="new-order-csv" class="mono" data-i18n-ph="orderCsvPh" placeholder="cod_piesa,denumire,cantitate_comandata&#10;BR-1042,Placute frana fata,120&#10;FL-0093,Filtru ulei,300"></textarea>
-      <p class="hint" data-i18n-html="orderCsvHint">Format așteptat: <code>cod_piesa,denumire,cantitate_comandata</code> — un rând de titlu e opțional, îl ignorăm automat.</p>
-    </div>
-    <div class="form-row">
-      <button class="btn btn-primary" id="btn-create-order" type="button" data-i18n="createBtn">Creează comanda</button>
-      <span class="note" id="create-order-msg"></span>
-    </div>
-  </section>
+  <p class="note topnote" data-i18n="saveNote">Datele se salvează automat în acest browser.</p>
 
   <section>
     <div class="section-head" style="margin-bottom:12px;">
-      <h2 data-i18n="ordersTitle">Comenzile tale</h2>
-      <span class="count" id="orders-count"></span>
+      <h2 data-i18n="ordersTitle">Comenzi active</h2>
+      <span class="head-tools">
+        <span class="count" id="orders-count"></span>
+        <button class="btn btn-sm btn-ghost" id="btn-toggle-all" type="button" hidden></button>
+      </span>
     </div>
     <div class="orders" id="orders-list"></div>
   </section>
 
   <footer class="hint-footer" data-i18n="footer">Tracker local · datele rămân în acest browser, nu pleacă pe niciun server.</footer>
 </div>
+
+<dialog id="import-dialog" class="import-dialog" aria-labelledby="imp-title">
+  <div class="imp-head"><h2 id="imp-title"></h2><p class="note" id="imp-local"></p></div>
+  <div id="import-body"></div>
+  <div class="imp-actions">
+    <button class="btn" id="imp-cancel" type="button"></button>
+    <button class="btn btn-primary" id="imp-confirm" type="button"></button>
+  </div>
+</dialog>
 
 <div id="toasts"></div>
 
@@ -548,30 +544,65 @@
   var I18N = {
     ro: {
       title: "Tracker Livrări Comenzi",
+      demoLoadedTag: "încărcată",
+      demoInvoiceNote: "În demo, folosește facturile gata de încărcat de mai sus. Butonul devine activ în aplicația finală.",
+      demoUpload: "Încarcă",
+      demoHint: "Apasă „Încarcă” ca să adaugi o factură parțială pe această comandă.",
+      demoTitle: "Facturi parțiale demo, gata de încărcat",
+      impChangeCols: "Verifică sau schimbă coloanele",
+      impMissing: "Lipsește câmpul obligatoriu: {fields}. Alege coloana potrivită mai jos sau verifică fișierul.",
+      impPick: "Alege fișier din folder",
+      impPickOther: "Alege alt fișier",
+      autoUnsupported: "Pot citi deocamdată doar fișiere Excel și CSV, iar „{name}” nu e unul dintre ele. PDF-urile și pozele nu sunt citite încă (extragerea cu Claude e planificată).",
+      autoMissing: "Nu am găsit în „{name}” coloana: {fields}. Verifică titlurile coloanelor sau încearcă alt fișier.",
+      autoNrFromName: "Fișierul nu are o coloană cu numărul facturii, așa că am folosit numele fișierului: {nr}.",
+      impFormats: "Formate acceptate: Excel (.xlsx, .xls) și CSV. Prima linie poate conține titlurile coloanelor; le recunoaștem în română și engleză.",
+      impReqNrNote: "din coloană sau îl scrii tu după ce alegi fișierul",
+      impOpt: "opțional",
+      impReq: "obligatoriu",
+      impReqIntroInvoice: "Alege din calculator fișierul cu factura livrării parțiale. Trebuie să conțină un tabel cu aceste coloane:",
+      impReqIntroOrder: "Alege din calculator un fișier cu detaliile comenzii. Fișierul trebuie să conțină un tabel cu aceste coloane:",
+      impEmpty: "Fișierul nu conține date.",
+      impLibError: "Nu s-a putut încărca cititorul de Excel (ești conectat la internet?). Poți salva fișierul ca CSV și îl încarci așa.",
+      impReadError: "Nu am putut citi fișierul: {err}",
+      impCancel: "Anulează",
+      impConfirmInvoice: "Adaugă factura",
+      impConfirmOrder: "Creează comanda",
+      impNoRows: "Nu am găsit nicio linie validă. Verifică alegerea coloanelor.",
+      impMore: "… și încă {n} linii.",
+      impSkipped: "{n} rânduri ignorate (fără cod sau cantitate)",
+      impPreview: "Previzualizare: {n} linii valide",
+      impInvDate: "Data facturii (opțional)",
+      impInvFromCol: "Se ia din coloana aleasă mai sus.",
+      impInvNrHint: "Obligatoriu: numărul facturii e cel care oprește dublarea.",
+      impInvNr: "Număr factură",
+      impOrderName: "Denumirea comenzii",
+      impColumn: "Coloana {n}",
+      impNone: "— nicio coloană —",
+      impColDate: "Data",
+      impColInv: "Nr. factură",
+      impColQtyDel: "Cantitate livrată",
+      impColQty: "Cantitate",
+      impColName: "Denumire",
+      impColCode: "Cod piesă",
+      impSheet: "Foaia",
+      impFile: "Fișier: {name}",
+      impLocal: "Fișierul se citește în browserul tău și nu pleacă pe niciun server.",
+      impTitleInvoice: "Extrage datele din factura parțială",
+      impTitleOrder: "Creează comandă nouă",
+      btnImportInvoice: "Extrage datele din factura parțială",
+      btnImportOrder: "Creează comandă nouă",
+      saveNote: "Datele se salvează automat pe acest calculator, în browser. Pe alt calculator sau pe telefon nu apar.",
+      collapseAll: "Închide toate",
+      expandAll: "Deschide toate",
       eyebrow: "Piese Auto · Aprovizionare",
       h1: '<span class="key">Tracker</span> Livrări Comenzi',
       sub: "Urmărește ce s-a livrat față de ce ai comandat, comandă cu comandă, fără să mai deschizi fiecare factură manual.",
-      btnDemo: "Încearcă cu un exemplu",
-      btnLoad: "Încarcă progres",
-      btnSave: "Salvează progres",
-      step1Title: "Extrage liniile cu Claude",
-      step1Text: "Deschide o conversație cu Claude, atașează comanda sau factura (PDF, Excel sau poză — orice format ai) și lipește promptul de mai jos. Claude îți întoarce liniile gata formatate.",
-      copyPrompt: "Copiază promptul",
-      step2Title: "Lipește rezultatul aici",
-      step2Text: "Copiază CSV-ul primit de la Claude și folosește-l ca să creezi o comandă nouă mai jos, sau ca să adaugi factura unei livrări parțiale pe o comandă existentă. Aplicația face potrivirea automat, pe cod de piesă.",
-      step2Note: "Datele se salvează automat în acest browser. Ca să le muți pe alt calculator sau să ai o copie de siguranță, apasă <strong>Salvează progres</strong>.",
-      newOrderTitle: "Comandă nouă",
-      orderNameLabel: "Denumire comandă",
-      orderNamePh: "ex: PO-4471 · Bosch România",
-      orderCsvLabel: "Linii comandă (CSV de la Claude)",
-      orderCsvPh: "cod_piesa,denumire,cantitate_comandata\nBR-1042,Placute frana fata,120\nFL-0093,Filtru ulei,300",
-      orderCsvHint: "Format așteptat: <code>cod_piesa,denumire,cantitate_comandata</code> — un rând de titlu e opțional, îl ignorăm automat.",
-      createBtn: "Creează comanda",
-      ordersTitle: "Comenzile tale",
+      ordersTitle: "Comenzi active",
       footer: "Tracker local · datele rămân în acest browser, nu pleacă pe niciun server.",
       orderSingular: "comandă",
       orderPlural: "comenzi",
-      empty: "Nu ai nicio comandă încă. Creeaz-o mai sus, cu CSV-ul extras de Claude din PO.",
+      empty: "Nu ai nicio comandă activă. Apasă „Creează comandă nouă” ca să începi.",
       noName: "Comandă fără nume",
       statusOk: "Complet",
       statusWarn: "Parțial",
@@ -596,29 +627,15 @@
       history: "istoric ({n})",
       noInvoice: "fără nr.",
       pcs: "buc",
-      addDeliveryTitle: "Adaugă factura pentru o livrare parțială (CSV de la Claude)",
-      addBtn: "Adaugă",
+      addDeliveryTitle: "Adaugă factura unei livrări parțiale",
       thCode: "Cod",
       thName: "Denumire",
       thOrdered: "Comandat",
       thDelivered: "Livrat",
       thRemaining: "Rămas",
       thStatus: "Status",
-      promptCopied: "Prompt copiat — lipește-l în Claude.",
-      copyFailed: "Nu am putut copia automat — am selectat textul, folosește Ctrl+C.",
-      selectManually: "Selectează textul de mai sus și copiază-l cu Ctrl+C.",
-      noValidLines: "N-am găsit linii valide în CSV. Verifică formatul: cod_piesa,denumire,cantitate_comandata.",
       noValidLinesDelivery: "N-am găsit linii valide în CSV.",
       orderCreated: 'Comanda "{name}" a fost creată ({lines}).',
-      saved: "Fișier descărcat. Data viitoare folosește „Încarcă progres” cu el.",
-      loaded: "Progres încărcat — comenzi: {n}.",
-      badFile: "Fișierul nu pare un progres salvat de aici — verifică-l.",
-      demoLoaded: "Exemplu încărcat: comanda PO-4471, încă fără facturi. Încarcă cele două facturi demo din panoul de mai jos.",
-      demoTitle: "Facturi demo, gata de încărcat",
-      demoHint: "Apasă „Încarcă” ca să adaugi o factură parțială pe comandă. Apasă încă o dată pe aceeași, ca să vezi ce se întâmplă când o dublezi.",
-      demoUpload: "Încarcă",
-      demoUploadAgain: "Încarcă din nou (dublură)",
-      demoLoadedTag: "încărcată",
       deleteOrder: "Șterge comanda",
       confirmDeleteOrder: 'Ștergi comanda "{name}" cu toate facturile ei? Nu se poate anula.',
       orderDeleted: 'Comanda "{name}" a fost ștearsă.',
@@ -626,52 +643,69 @@
       unmatchedSuffix: ", {n} nepotrivite",
       unmatchedTitle: "{n} cod(uri) nu se potrivesc cu nicio linie din comandă",
       unmatchedHint: " — posibil piesă înlocuitoare sau cod greșit pe factură.",
-      demoOrderName: "DEMO · PO-4471 · Bosch România",
-      demoPart1: "Plăcuțe frână față",
-      demoPart2: "Filtru ulei",
-      demoPart3: "Bujie iridiu",
-      demoPart4: "Amortizor spate",
-      demoPart5: "Piesă înlocuitoare",
       dateLocale: "ro-RO",
-      prompt:
-        "Ești un asistent care extrage linii de piese auto dintr-un document (comandă de achiziție sau " +
-        "factură de livrare). Atașat găsești documentul. Extrage TOATE liniile de piese și dă-mi rezultatul " +
-        "STRICT ca CSV (fără text explicativ înainte sau după), cu virgulă ca separator, o linie de titlu, apoi datele:\n\n" +
-        "Dacă documentul este o COMANDĂ (purchase order):\n" +
-        "cod_piesa,denumire,cantitate_comandata\n\n" +
-        "Dacă documentul este o FACTURĂ de livrare:\n" +
-        "cod_piesa,denumire,cantitate_livrata,nr_factura,data\n\n" +
-        "Reguli: cod_piesa exact ca în document (fără spații în plus); cantitate ca număr întreg, fără text; " +
-        "la o factură, completează nr_factura și data pe FIECARE rând, cu numărul și data facturii; " +
-        "dacă denumirea conține virgulă, pune-o între ghilimele; dacă nu găsești un cod de piesă explicit, " +
-        "folosește codul intern/SKU din document. Nu adăuga alte coloane și nu rezuma — vreau toate liniile."
     },
     en: {
       title: "Order Delivery Tracker",
+      demoLoadedTag: "uploaded",
+      demoInvoiceNote: "In the demo, use the ready-to-upload invoices above. This button becomes active in the final application.",
+      demoUpload: "Upload",
+      demoHint: "Press “Upload” to add a partial invoice to this order.",
+      demoTitle: "Demo partial invoices, ready to upload",
+      impChangeCols: "Check or change the columns",
+      impMissing: "Required field missing: {fields}. Pick the right column below or check the file.",
+      impPick: "Choose file from folder",
+      impPickOther: "Choose another file",
+      autoUnsupported: "For now I can only read Excel and CSV files, and “{name}” is not one of them. PDFs and photos are not read yet (extraction with Claude is planned).",
+      autoMissing: "I couldn't find this column in “{name}”: {fields}. Check the column headers or try another file.",
+      autoNrFromName: "The file has no invoice-number column, so I used the file name: {nr}.",
+      impFormats: "Accepted formats: Excel (.xlsx, .xls) and CSV. The first row can hold the column headers; we recognise Romanian and English ones.",
+      impReqNrNote: "from a column, or typed by you after picking the file",
+      impOpt: "optional",
+      impReq: "required",
+      impReqIntroInvoice: "Pick the file with the partial-delivery invoice from your computer. It must contain a table with these columns:",
+      impReqIntroOrder: "Pick a file from your computer with the order details. The file must contain a table with these columns:",
+      impEmpty: "The file has no data.",
+      impLibError: "Couldn't load the Excel reader (are you online?). You can save the file as CSV and upload that instead.",
+      impReadError: "Couldn't read the file: {err}",
+      impCancel: "Cancel",
+      impConfirmInvoice: "Add invoice",
+      impConfirmOrder: "Create order",
+      impNoRows: "No valid lines found. Check the column selection.",
+      impMore: "… and {n} more lines.",
+      impSkipped: "{n} rows ignored (no code or quantity)",
+      impPreview: "Preview: {n} valid lines",
+      impInvDate: "Invoice date (optional)",
+      impInvFromCol: "Taken from the column chosen above.",
+      impInvNrHint: "Required: the invoice number is what prevents duplicates.",
+      impInvNr: "Invoice number",
+      impOrderName: "Order name",
+      impColumn: "Column {n}",
+      impNone: "— no column —",
+      impColDate: "Date",
+      impColInv: "Invoice no.",
+      impColQtyDel: "Delivered quantity",
+      impColQty: "Quantity",
+      impColName: "Description",
+      impColCode: "Part code",
+      impSheet: "Sheet",
+      impFile: "File: {name}",
+      impLocal: "The file is read in your browser and is not sent to any server.",
+      impTitleInvoice: "Extract data from a partial invoice",
+      impTitleOrder: "Create new order",
+      btnImportInvoice: "Extract data from a partial invoice",
+      btnImportOrder: "Create new order",
+      saveNote: "Your data is saved automatically on this computer, in the browser. It won't show up on another computer or phone.",
+      collapseAll: "Close all",
+      expandAll: "Open all",
       eyebrow: "Auto Parts · Procurement",
       h1: 'Order Delivery <span class="key">Tracker</span>',
       sub: "See what has been delivered against what you ordered, order by order, without opening every invoice by hand.",
-      btnDemo: "Try with an example",
-      btnLoad: "Load progress",
-      btnSave: "Save progress",
-      step1Title: "Extract the lines with Claude",
-      step1Text: "Open a conversation with Claude, attach the order or invoice (PDF, Excel or photo — any format) and paste the prompt below. Claude returns the lines ready to use.",
-      copyPrompt: "Copy prompt",
-      step2Title: "Paste the result here",
-      step2Text: "Copy the CSV Claude gives you and use it to create a new order below, or to add the invoice of a partial delivery to an existing order. The app matches everything automatically, by part code.",
-      step2Note: "Your data is saved automatically in this browser. To move it to another computer or keep a backup, press <strong>Save progress</strong>.",
-      newOrderTitle: "New order",
-      orderNameLabel: "Order name",
-      orderNamePh: "e.g. PO-4471 · Bosch Romania",
-      orderCsvLabel: "Order lines (CSV from Claude)",
-      orderCsvPh: "cod_piesa,denumire,cantitate_comandata\nBR-1042,Front brake pads,120\nFL-0093,Oil filter,300",
-      orderCsvHint: "Expected format: <code>cod_piesa,denumire,cantitate_comandata</code> — a header row is optional, it is ignored automatically. (Column names stay in Romanian on purpose: that is what the app reads.)",
-      createBtn: "Create order",
-      ordersTitle: "Your orders",
+      ordersTitle: "Active orders",
       footer: "Local tracker · your data stays in this browser and is never sent to a server.",
       orderSingular: "order",
       orderPlural: "orders",
-      empty: "You have no orders yet. Create one above, using the CSV Claude extracted from the PO.",
+      empty: "You have no active orders. Press “Create new order” to start.",
       noName: "Untitled order",
       statusOk: "Complete",
       statusWarn: "Partial",
@@ -696,29 +730,15 @@
       history: "history ({n})",
       noInvoice: "no inv. no.",
       pcs: "pcs",
-      addDeliveryTitle: "Add the invoice for a partial delivery (CSV from Claude)",
-      addBtn: "Add",
+      addDeliveryTitle: "Add the invoice of a partial delivery",
       thCode: "Code",
       thName: "Description",
       thOrdered: "Ordered",
       thDelivered: "Delivered",
       thRemaining: "Remaining",
       thStatus: "Status",
-      promptCopied: "Prompt copied — paste it into Claude.",
-      copyFailed: "Couldn't copy automatically — the text is selected, use Ctrl+C.",
-      selectManually: "Select the text above and copy it with Ctrl+C.",
-      noValidLines: "No valid lines found in the CSV. Check the format: cod_piesa,denumire,cantitate_comandata.",
       noValidLinesDelivery: "No valid lines found in the CSV.",
       orderCreated: 'Order "{name}" was created ({lines}).',
-      saved: "File downloaded. Next time, use “Load progress” with it.",
-      loaded: "Progress loaded — orders: {n}.",
-      badFile: "This file doesn't look like progress saved from here — please check it.",
-      demoLoaded: "Example loaded: order PO-4471, no invoices yet. Upload the two demo invoices from the panel below.",
-      demoTitle: "Demo invoices, ready to upload",
-      demoHint: "Press “Upload” to add a partial invoice to the order. Press the same one again to see what happens when you duplicate it.",
-      demoUpload: "Upload",
-      demoUploadAgain: "Upload again (duplicate)",
-      demoLoadedTag: "uploaded",
       deleteOrder: "Delete order",
       confirmDeleteOrder: 'Delete order "{name}" and all its invoices? This cannot be undone.',
       orderDeleted: 'Order "{name}" was deleted.',
@@ -726,26 +746,7 @@
       unmatchedSuffix: ", {n} unmatched",
       unmatchedTitle: "{n} code(s) don't match any line on the order",
       unmatchedHint: " — possibly a substitute part or a wrong code on the invoice.",
-      demoOrderName: "DEMO · PO-4471 · Bosch Romania",
-      demoPart1: "Front brake pads",
-      demoPart2: "Oil filter",
-      demoPart3: "Iridium spark plug",
-      demoPart4: "Rear shock absorber",
-      demoPart5: "Substitute part",
       dateLocale: "en-GB",
-      prompt:
-        "You are an assistant that extracts auto parts lines from a document (a purchase order or a " +
-        "delivery invoice). The document is attached. Extract ALL part lines and give me the result " +
-        "STRICTLY as CSV (no explanatory text before or after), comma-separated, one header line, then the data:\n\n" +
-        "If the document is a PURCHASE ORDER:\n" +
-        "cod_piesa,denumire,cantitate_comandata\n\n" +
-        "If the document is a DELIVERY INVOICE:\n" +
-        "cod_piesa,denumire,cantitate_livrata,nr_factura,data\n\n" +
-        "Rules: use these column names exactly as written (they are in Romanian on purpose — the tracker reads them); " +
-        "cod_piesa exactly as in the document (no extra spaces); quantity as a whole number, no text; " +
-        "for an invoice, fill nr_factura and data on EVERY row with the invoice number and date; " +
-        "if the description contains a comma, wrap it in quotes; if you can't find an explicit part code, " +
-        "use the internal code/SKU from the document. Don't add other columns and don't summarize — I want every line."
     }
   };
 
@@ -799,14 +800,15 @@
     document.querySelectorAll("[data-i18n]").forEach(function (el) { el.textContent = t(el.getAttribute("data-i18n")); });
     document.querySelectorAll("[data-i18n-html]").forEach(function (el) { el.innerHTML = t(el.getAttribute("data-i18n-html")); });
     document.querySelectorAll("[data-i18n-ph]").forEach(function (el) { el.placeholder = t(el.getAttribute("data-i18n-ph")); });
-    $("prompt-text").value = t("prompt");
+    updateToggleAll();
     document.querySelectorAll("[data-set-lang]").forEach(function (b) {
       b.setAttribute("aria-pressed", b.getAttribute("data-set-lang") === lang ? "true" : "false");
     });
   }
 
   // ---- CSV parsing (tolerant: handles quoted fields, ignores a header row) ----
-  function parseCsvLine(line) {
+  function parseCsvLine(line, delim) {
+    delim = delim || ",";
     var out = [];
     var cur = "";
     var inQuotes = false;
@@ -819,7 +821,7 @@
         } else { cur += c; }
       } else {
         if (c === '"') { inQuotes = true; }
-        else if (c === ",") { out.push(cur); cur = ""; }
+        else if (c === delim) { out.push(cur); cur = ""; }
         else { cur += c; }
       }
     }
@@ -827,9 +829,21 @@
     return out.map(function (s) { return s.trim(); });
   }
 
+  // Separatorul folosit în prima linie: tab (lipit din Excel), punct-virgulă sau virgulă.
+  function detectDelim(line) {
+    var best = ",";
+    var bestN = -1;
+    [",", ";", "\t"].forEach(function (d) {
+      var n = line.split(d).length - 1;
+      if (n > bestN) { best = d; bestN = n; }
+    });
+    return best;
+  }
+
   function parseCsv(text) {
     var lines = String(text || "").split(/\r?\n/).map(function (l) { return l; }).filter(function (l) { return l.trim() !== ""; });
-    var rows = lines.map(parseCsvLine);
+    var delim = lines.length ? detectDelim(lines[0]) : ",";
+    var rows = lines.map(function (l) { return parseCsvLine(l, delim); });
     if (rows.length && /cod/i.test(rows[0][0] || "")) {
       rows = rows.slice(1);
     }
@@ -842,7 +856,7 @@
     var lines = [];
     var byCod = {};
     rows.forEach(function (r) {
-      var cod = r[0], denumire = r[1], qty = parseInt(r[2], 10);
+      var cod = r[0], denumire = r[1], qty = parseQty(r[2]);
       if (!cod || isNaN(qty)) return;
       var key = cod.toLowerCase();
       if (byCod[key]) {
@@ -925,7 +939,7 @@
     });
 
     rows.forEach(function (r) {
-      var cod = r[0], denumire = r[1], qty = parseInt(r[2], 10), nrFactura = r[3] || "", data = r[4] || "";
+      var cod = r[0], denumire = r[1], qty = parseQty(r[2]), nrFactura = r[3] || "", data = r[4] || "";
       if (!cod || isNaN(qty)) return;
       var line = order.lines.find(function (l) { return l.cod.toLowerCase() === cod.toLowerCase(); });
       if (!line) {
@@ -953,12 +967,25 @@
   function restore() {
     try {
       var saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
-      if (saved && Array.isArray(saved.orders)) state = saved;
+      if (saved && Array.isArray(saved.orders)) {
+        state = saved;
+        // Curățăm doar copiile demo vechi (din versiuni mai vechi, fără marcajul actual).
+        state.orders = state.orders.filter(function (o) {
+          return !(o.demo === true || (/^DEMO · /.test(o.name) && !DEMO_ORDERS[o.demo]));
+        });
+      }
     } catch (e) { /* date corupte sau stocare indisponibilă: pornim gol */ }
+    // Prima dată când se deschide pagina: 2 comenzi demo, ca să se vadă cum funcționează.
+    // Dacă omul le șterge, nu mai revin (reținem că au fost deja arătate).
+    if (!state.demoSeeded) {
+      createDemoOrders().forEach(function (o) { state.orders.push(o); });
+      state.demoSeeded = true;
+    }
   }
 
   function render() {
     renderOrders();
+    updateToggleAll();
     persist();
   }
 
@@ -992,7 +1019,7 @@
     $("orders-count").textContent = state.orders.length ? (state.orders.length + " " + (state.orders.length === 1 ? t("orderSingular") : t("orderPlural"))) : "";
 
     if (!state.orders.length) {
-      host.innerHTML = '<div class="panel empty">' + t("empty") + '</div>';
+      host.innerHTML = '<div class="panel empty"><p>' + t("empty") + '</p></div>';
       return;
     }
 
@@ -1023,7 +1050,7 @@
         return (
           '<tr>' +
           '<td class="mono">' + escapeHtml(line.cod) + '</td>' +
-          '<td class="part-name">' + escapeHtml(line.denumire) + '</td>' +
+          '<td class="part-name">' + escapeHtml(partName(order, line)) + '</td>' +
           '<td class="qty-cell mono">' + line.comandat + '</td>' +
           '<td class="qty-cell mono">' + delivered + '</td>' +
           '<td class="qty-cell mono">' + (remaining < 0 ? ("+" + Math.abs(remaining)) : remaining) + '</td>' +
@@ -1036,9 +1063,9 @@
       }).join("");
 
       return (
-        '<details class="panel order-card" data-order-id="' + order.id + '"' + ((existed[order.id] ? wasOpen[order.id] : idx === 0) ? " open" : "") + '>' +
+        '<details class="panel order-card" data-order-id="' + order.id + '"' + ((existed[order.id] ? wasOpen[order.id] : (idx === 0 || !!order.demo)) ? " open" : "") + '>' +
         '<summary>' +
-        '<div class="order-title"><span class="chev">▸</span><div><h3>' + escapeHtml(order.name) + '</h3>' +
+        '<div class="order-title"><span class="chev">▸</span><div><h3>' + escapeHtml(orderTitle(order)) + '</h3>' +
         '<div class="order-meta">' + t("orderMeta", { date: dateStr, lines: linesLabel(order.lines.length), inv: invoiceCountLabel(order) }) + '</div></div></div>' +
         '<div class="order-stats">' +
         (counts.danger ? '<span class="chip danger"><span class="dot"></span>' + counts.danger + ' ' + statusLabel("danger") + '</span>' : '') +
@@ -1051,10 +1078,8 @@
         demoPanelHtml(order) +
         '<div class="add-delivery">' +
         '<strong style="font-size:13px;">' + t("addDeliveryTitle") + '</strong>' +
-        '<div class="form-row">' +
-        '<textarea class="mono" data-delivery-input="' + order.id + '" rows="3" placeholder="cod_piesa,denumire,cantitate_livrata,nr_factura,data"></textarea>' +
-        '<button class="btn btn-primary" data-add-delivery="' + order.id + '" type="button">' + t("addBtn") + '</button>' +
-        '</div>' +
+        '<div class="form-row"><button class="btn btn-primary" type="button" data-import-invoice="' + order.id + '"' + (order.demo ? " disabled" : "") + '>' + t("btnImportInvoice") + '</button>' +
+        (order.demo ? '<span class="note">' + t("demoInvoiceNote") + '</span>' : '') + '</div>' +
         '<div data-delivery-msg="' + order.id + '"></div>' +
         '</div>' +
         invoicesHtml(order) +
@@ -1079,122 +1104,563 @@
       });
     });
 
-    $("btn-copy-prompt").addEventListener("click", function () {
-      var text = t("prompt");
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text).then(function () {
-          showToast(t("promptCopied"));
-        }, function () {
-          $("prompt-text").select();
-          showToast(t("copyFailed"));
-        });
-      } else {
-        $("prompt-text").select();
-        showToast(t("selectManually"));
-      }
+    $("btn-toggle-all").addEventListener("click", function () {
+      var cards = document.querySelectorAll("details.order-card");
+      var allOpen = [].every.call(cards, function (d) { return d.open; });
+      [].forEach.call(cards, function (d) { d.open = !allOpen; });
+      updateToggleAll();
     });
+    // Când omul deschide/închide o comandă, eticheta butonului se actualizează.
+    document.addEventListener("toggle", function (e) {
+      if (e.target.matches && e.target.matches("details.order-card")) updateToggleAll();
+    }, true);
 
-    $("btn-create-order").addEventListener("click", function () {
-      var name = $("new-order-name").value.trim();
-      var csv = $("new-order-csv").value;
-      var order = newOrderFromCsv(name, csv);
-      var msg = $("create-order-msg");
-      if (!order) {
-        msg.textContent = t("noValidLines");
-        msg.style.color = "var(--danger)";
-        return;
-      }
-      state.orders.push(order);
-      $("new-order-name").value = "";
-      $("new-order-csv").value = "";
-      msg.textContent = "";
-      render();
-      showToast(t("orderCreated", { name: order.name, lines: linesLabel(order.lines.length) }));
-    });
+  }
 
-    $("btn-save").addEventListener("click", function () {
-      var json = JSON.stringify(state, null, 2);
-      var d = new Date();
-      var stamp = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
-      var url = URL.createObjectURL(new Blob([json], { type: "application/json" }));
-      var a = document.createElement("a");
-      a.href = url;
-      a.download = "tracker-livrari-" + stamp + ".json";
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
-      showToast(t("saved"));
-    });
+  // ---- comenzi demo ----
+  // Două comenzi diferite (furnizor, piese, cantități), fiecare cu facturi parțiale gata de încărcat.
+  // Panoul din comanda demo le încarcă cu un click; a doua apăsare pe aceeași arată protecția la dublură.
+  var P = {
+    brake: { ro: "Plăcuțe frână față", en: "Front brake pads" },
+    oil: { ro: "Filtru ulei", en: "Oil filter" },
+    spark: { ro: "Bujie iridiu", en: "Iridium spark plug" },
+    shock: { ro: "Amortizor spate", en: "Rear shock absorber" },
+    subst: { ro: "Piesă înlocuitoare", en: "Substitute part" },
+    head: { ro: "Far LED față", en: "LED headlight" },
+    tail: { ro: "Lampă stop spate", en: "Rear tail light" },
+    abs: { ro: "Senzor ABS", en: "ABS sensor" },
+    belt: { ro: "Kit curea distribuție", en: "Timing belt kit" }
+  };
 
-    $("btn-demo").addEventListener("click", function () {
-      var order = newOrderFromCsv(t("demoOrderName"),
-        "cod_piesa,denumire,cantitate_comandata\n" +
-        "BR-1042," + t("demoPart1") + ",120\n" +
-        "FL-0093," + t("demoPart2") + ",300\n" +
-        "SP-2210," + t("demoPart3") + ",200\n" +
-        "AM-5518," + t("demoPart4") + ",40");
-      order.demo = true;
-      // O singură comandă demo: apăsarea din nou o resetează, nu adaugă o copie
-      // (scoate și copiile vechi create înainte să existe marcajul "demo").
-      state.orders = state.orders.filter(function (o) { return !o.demo && !/^DEMO · /.test(o.name); });
-      state.orders.push(order);
-      render();
-      showToast(t("demoLoaded"));
-    });
+  var DEMO_ORDERS = {
+    A: {
+      name: { ro: "DEMO · PO-4471 · Bosch România", en: "DEMO · PO-4471 · Bosch Romania" },
+      lines: [["BR-1042", P.brake, 120], ["FL-0093", P.oil, 300], ["SP-2210", P.spark, 200], ["AM-5518", P.shock, 40]],
+      invoices: [
+        { nr: "FA-9001", data: "2026-09-12", rows: [["BR-1042", P.brake, 120], ["FL-0093", P.oil, 180], ["SP-2210", P.spark, 220], ["XX-0001", P.subst, 10]] },
+        { nr: "FA-9042", data: "2026-09-26", rows: [["FL-0093", P.oil, 60], ["AM-5518", P.shock, 25]] },
+        { nr: "FA-9077", data: "2026-10-03", rows: [["FL-0093", P.oil, 60], ["AM-5518", P.shock, 15]] }
+      ]
+    },
+    B: {
+      name: { ro: "DEMO · PO-5120 · Continental Distribuție", en: "DEMO · PO-5120 · Continental Distribution" },
+      lines: [["HL-3301", P.head, 30], ["HL-4410", P.tail, 60], ["AB-7782", P.abs, 80], ["TB-2205", P.belt, 50]],
+      invoices: [
+        { nr: "FC-2210", data: "2026-09-18", rows: [["HL-3301", P.head, 30], ["HL-4410", P.tail, 25], ["AB-7782", P.abs, 40]] },
+        { nr: "FC-2288", data: "2026-10-02", rows: [["HL-4410", P.tail, 35], ["AB-7782", P.abs, 40], ["TB-2205", P.belt, 20]] }
+      ]
+    }
+  };
 
-    $("btn-load").addEventListener("click", function () { $("file-load").click(); });
-    $("file-load").addEventListener("change", function (e) {
-      var file = e.target.files && e.target.files[0];
-      if (!file) return;
-      var reader = new FileReader();
-      reader.onload = function () {
-        try {
-          var data = JSON.parse(reader.result);
-          if (!data || !Array.isArray(data.orders)) throw new Error("format invalid");
-          state = data;
-          render();
-          showToast(t("loaded", { n: state.orders.length }));
-        } catch (err) {
-          showToast(t("badFile"), true);
-        }
-      };
-      reader.readAsText(file);
-      e.target.value = "";
+  // Text în limba curentă: fie un șir simplu, fie un obiect { ro, en }.
+  function dn(x) { return typeof x === "string" ? x : x[lang]; }
+
+  function demoConfig(order) { return order.demo && DEMO_ORDERS[order.demo] ? DEMO_ORDERS[order.demo] : null; }
+
+  // Comenzile demo se afișează în limba curentă (nume și piese), chiar dacă au fost create în cealaltă.
+  function orderTitle(order) { var d = demoConfig(order); return d ? dn(d.name) : order.name; }
+  function partName(order, line) {
+    var d = demoConfig(order);
+    if (d) {
+      var hit = d.lines.find(function (r) { return r[0] === line.cod; });
+      if (hit) return dn(hit[1]);
+    }
+    return line.denumire;
+  }
+
+  function isDemoOrder(o) { return !!o.demo || /^DEMO · /.test(o.name); }
+
+  function createDemoOrders() {
+    var now = Date.now();
+    return Object.keys(DEMO_ORDERS).map(function (id, k) {
+      var d = DEMO_ORDERS[id];
+      var csv = "cod_piesa,denumire,cantitate_comandata\n" + d.lines.map(function (r) {
+        return r[0] + "," + dn(r[1]) + "," + r[2];
+      }).join("\n");
+      var o = newOrderFromCsv(dn(d.name), csv);
+      o.demo = id;
+      o.createdAt = now - k; // prima comandă demo apare prima în listă
+      return o;
     });
   }
 
-  // Facturile parțiale demo: stau într-un panou în comanda demo, ca vizitatorul să le încarce
-  // (și să le dubleze) cu un click, fără să lipească nimic.
-  var DEMO_INVOICES = [
-    { nr: "FA-9001", data: "2026-09-12", rows: [["BR-1042", "demoPart1", 120], ["FL-0093", "demoPart2", 180], ["SP-2210", "demoPart3", 220], ["XX-0001", "demoPart5", 10]] },
-    { nr: "FA-9042", data: "2026-09-26", rows: [["FL-0093", "demoPart2", 60], ["AM-5518", "demoPart4", 25]] }
-  ];
-
-  function demoInvoiceCsv(i) {
-    var inv = DEMO_INVOICES[i];
+  function demoInvoiceCsv(order, i) {
+    var inv = demoConfig(order).invoices[i];
     return "cod_piesa,denumire,cantitate_livrata,nr_factura,data\n" + inv.rows.map(function (r) {
-      return r[0] + "," + t(r[1]) + "," + r[2] + "," + inv.nr + "," + inv.data;
+      return r[0] + "," + dn(r[1]) + "," + r[2] + "," + inv.nr + "," + inv.data;
     }).join("\n");
   }
 
   function demoPanelHtml(order) {
-    if (!order.demo) return "";
+    var d = demoConfig(order);
+    if (!d) return "";
     var loaded = {};
     orderInvoices(order).forEach(function (g) { loaded[g.key] = true; });
-    var cards = DEMO_INVOICES.map(function (inv, i) {
+    var cards = d.invoices.map(function (inv, i) {
       var pcs = inv.rows.reduce(function (s, r) { return s + r[2]; }, 0);
       var isLoaded = !!loaded["n:" + normNr(inv.nr)];
       return '<div class="demo-card">' +
         '<div><span class="mono inv-nr">' + inv.nr + '</span> <span class="inv-date">' + inv.data + '</span>' +
         '<div class="inv-sum">' + t("invoiceLines", { lines: linesLabel(inv.rows.length), pcs: pcs }) + '</div></div>' +
         '<div class="demo-actions">' +
-        (isLoaded ? '<span class="chip ok"><span class="dot"></span>' + t("demoLoadedTag") + '</span>' : '') +
-        '<button class="btn btn-sm btn-primary" type="button" data-demo-invoice="' + i + '" data-demo-order="' + order.id + '">' + t(isLoaded ? "demoUploadAgain" : "demoUpload") + '</button>' +
+        (isLoaded
+          ? '<span class="chip ok"><span class="dot"></span>' + t("demoLoadedTag") + '</span>'
+          : '<button class="btn btn-sm btn-primary" type="button" data-demo-invoice="' + i + '" data-demo-order="' + order.id + '">' + t("demoUpload") + '</button>') +
         '</div></div>';
     }).join("");
     return '<div class="demo-invoices"><strong>' + t("demoTitle") + '</strong>' +
       '<p class="note">' + t("demoHint") + '</p><div class="demo-cards">' + cards + '</div></div>';
+  }
+
+  // Butonul "Deschide toate / Închide toate": apare doar când sunt cel puțin 2 comenzi.
+  function updateToggleAll() {
+    var btn = $("btn-toggle-all");
+    var cards = document.querySelectorAll("details.order-card");
+    btn.hidden = cards.length < 2;
+    var allOpen = cards.length > 0 && [].every.call(cards, function (d) { return d.open; });
+    btn.textContent = t(allOpen ? "collapseAll" : "expandAll");
+  }
+
+  // ---- încărcare din fișier (Excel / CSV) ----
+  // Fluxul: "Creează comandă nouă" -> fereastră cu câmpurile obligatorii -> alegi fișierul din folder
+  // -> verificare + previzualizare -> confirmi. Fișierul se citește în browser; nu pleacă pe niciun server.
+  // Biblioteca SheetJS (doar pentru .xlsx/.xls) se încarcă la prima folosire, de pe CDN-ul oficial,
+  // fixată pe o versiune și verificată cu amprentă de securitate (SRI).
+  var SHEETJS_URL = "https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js";
+  var SHEETJS_SRI = "sha384-EnyY0/GSHQGSxSgMwaIPzSESbqoOLSexfnSMN2AP+39Ckmn92stwABZynq1JyzdT";
+  var sheetJsPromise = null;
+  var importCtx = null;
+
+  function loadSheetJs() {
+    if (window.XLSX) return Promise.resolve(window.XLSX);
+    if (!sheetJsPromise) {
+      sheetJsPromise = new Promise(function (resolve, reject) {
+        var s = document.createElement("script");
+        s.src = SHEETJS_URL;
+        s.integrity = SHEETJS_SRI;
+        s.crossOrigin = "anonymous";
+        s.onload = function () { resolve(window.XLSX); };
+        s.onerror = function () { sheetJsPromise = null; reject(new Error("sheetjs")); };
+        document.head.appendChild(s);
+      });
+    }
+    return sheetJsPromise;
+  }
+
+  function isEmptyRow(row) {
+    return !row || row.every(function (c) { return c === "" || c == null || (typeof c === "string" && c.trim() === ""); });
+  }
+
+  // CSV / TSV: încercăm UTF-8; dacă nu e valid (tipic pentru CSV din Excel în română), folosim Windows-1250.
+  function decodeText(buf) {
+    try { return new TextDecoder("utf-8", { fatal: true }).decode(buf).replace(/^﻿/, ""); }
+    catch (e) { return new TextDecoder("windows-1250").decode(buf); }
+  }
+
+  // Rezultat: lista de foi, fiecare { name, rows } cu rows = rânduri de celule.
+  function readTableFromFile(file) {
+    var ext = (file.name.split(".").pop() || "").toLowerCase();
+    return file.arrayBuffer().then(function (buf) {
+      if (ext === "csv" || ext === "tsv" || ext === "txt") {
+        var lines = decodeText(buf).split(/\r?\n/).filter(function (l) { return l.trim() !== ""; });
+        var delim = lines.length ? detectDelim(lines[0]) : ",";
+        var rows = lines.map(function (l) { return parseCsvLine(l, delim); });
+        return rows.length ? [{ name: file.name, rows: rows }] : [];
+      }
+      return loadSheetJs().then(function (X) {
+        var wb = X.read(buf, { type: "array", cellDates: true });
+        return wb.SheetNames.map(function (name) {
+          return { name: name, rows: X.utils.sheet_to_json(wb.Sheets[name], { header: 1, raw: true, defval: "" }) };
+        }).filter(function (s) { return s.rows.some(function (r) { return !isEmptyRow(r); }); });
+      });
+    });
+  }
+
+  // ---- recunoașterea coloanelor, după titluri (română / engleză) ----
+  function normHeader(s) {
+    return String(s == null ? "" : s).toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]/g, "");
+  }
+  var SYN = {
+    cod: ["cod", "codpiesa", "codarticol", "codprodus", "sku", "code", "partcode", "partno", "partnumber", "partnr", "itemcode", "itemno", "referinta", "ref", "nrpiesa", "oem", "codintern"],
+    name: ["denumire", "denumirepiesa", "denumirearticol", "denumireprodus", "descriere", "produs", "piesa", "nume", "description", "itemdescription", "partname", "name"],
+    qty: ["cantitate", "cant", "cantitatecomandata", "cantitatelivrata", "qty", "quantity", "orderqty", "orderedquantity", "deliveredquantity", "qtydelivered", "livrat", "comandat", "bucati", "buc", "nrbuc"],
+    nr: ["nrfactura", "numarfactura", "nrfacturii", "factura", "nrfact", "invoice", "invoiceno", "invoicenumber", "invoicenr", "nrdocument"],
+    date: ["data", "datafactura", "datafacturii", "date", "invoicedate", "datadocument"]
+  };
+
+  function headerScore(h, field, mode) {
+    var n = normHeader(h);
+    if (!n) return 0;
+    var score = 0;
+    if (SYN[field].indexOf(n) >= 0) score = 3;
+    else if (SYN[field].some(function (s) { return s.length >= 4 && n.indexOf(s) >= 0; })) score = 2;
+    if (score && field === "qty") {
+      if (mode === "invoice" && /livrat|deliver|shipped/.test(n)) score = 4;
+      if (mode === "order" && /comand|order/.test(n)) score = 4;
+    }
+    return score;
+  }
+
+  function bestColumn(row, field, mode, used) {
+    var best = -1, bestScore = 0;
+    for (var i = 0; i < row.length; i++) {
+      if (used[i]) continue;
+      var sc = headerScore(row[i], field, mode);
+      if (sc > bestScore) { best = i; bestScore = sc; }
+    }
+    return best;
+  }
+
+  function guessMapping(row, mode) {
+    var used = {};
+    var map = { cod: -1, qty: -1, name: -1, nr: -1, date: -1 };
+    var fields = mode === "invoice" ? ["cod", "qty", "name", "nr", "date"] : ["cod", "qty", "name"];
+    fields.forEach(function (f) {
+      var c = bestColumn(row, f, mode, used);
+      if (c >= 0) { map[f] = c; used[c] = true; }
+    });
+    return map;
+  }
+
+  // Rândul cu titluri = primul (din primele 25) în care se recunosc și codul, și cantitatea.
+  function detectForSheet(ctx) {
+    var rows = ctx.sheets[ctx.sheetIdx].rows;
+    ctx.headerRow = -1;
+    ctx.map = { cod: -1, qty: -1, name: -1, nr: -1, date: -1 };
+    var partial = null;
+    for (var r = 0; r < Math.min(rows.length, 25); r++) {
+      var m = guessMapping(rows[r] || [], ctx.mode);
+      if (m.cod >= 0 && m.qty >= 0) { ctx.headerRow = r; ctx.map = m; return; }
+      // Rând de titluri cu cel puțin 2 câmpuri recunoscute, dar fără cod sau fără cantitate: îl păstrăm,
+      // ca să spunem exact ce lipsește (în loc să tratăm titlurile ca date).
+      var found = ["cod", "qty", "name", "nr", "date"].filter(function (f) { return m[f] >= 0; }).length;
+      if (!partial && found >= 2) partial = { row: r, map: m };
+    }
+    if (partial) { ctx.headerRow = partial.row; ctx.map = partial.map; return; }
+    // Fără titluri recunoscute: presupunem coloanele în ordinea cod, denumire, cantitate, (nr. factură, dată).
+    // Omul le poate corecta; dacă nu se potrivesc, previzualizarea o arată imediat.
+    var n = sheetCols(ctx);
+    ctx.map = { cod: 0, name: n > 2 ? 1 : -1, qty: n > 2 ? 2 : Math.min(1, n - 1), nr: -1, date: -1 };
+    if (ctx.mode === "invoice") { ctx.map.nr = n > 3 ? 3 : -1; ctx.map.date = n > 4 ? 4 : -1; }
+  }
+
+  function sheetCols(ctx) {
+    var n = 0;
+    ctx.sheets[ctx.sheetIdx].rows.slice(0, 200).forEach(function (r) { if (r.length > n) n = r.length; });
+    return n;
+  }
+
+  // Cantități scrise în feluri diferite: 120, "1 200", "1.200", "1.200,00", "120 buc".
+  function parseQty(v) {
+    if (typeof v === "number") return isFinite(v) ? Math.round(v) : NaN;
+    var s = String(v == null ? "" : v).replace(/[\s ]/g, "").replace(/[^0-9.,-]/g, "");
+    if (!s) return NaN;
+    var hasDot = s.indexOf(".") >= 0, hasComma = s.indexOf(",") >= 0;
+    if (hasDot && hasComma) {
+      var lastSep = Math.max(s.lastIndexOf("."), s.lastIndexOf(","));
+      s = s.slice(0, lastSep).replace(/[.,]/g, "") + "." + s.slice(lastSep + 1);
+    } else if (hasComma) {
+      s = /,\d{1,2}$/.test(s) ? s.replace(",", ".") : s.replace(/,/g, "");
+    } else if (hasDot && /\.\d{3}(\.|$)/.test(s)) {
+      s = s.replace(/\./g, "");
+    }
+    var n = parseFloat(s);
+    return isFinite(n) ? Math.round(n) : NaN;
+  }
+
+  function cellText(row, idx) {
+    if (idx < 0 || idx >= row.length) return "";
+    var v = row[idx];
+    if (v instanceof Date) return new Date(v.getTime() + 12 * 3600 * 1000).toISOString().slice(0, 10);
+    return v == null ? "" : String(v).trim();
+  }
+
+  function toCsvLine(arr) {
+    return arr.map(function (x) {
+      var s = String(x == null ? "" : x);
+      return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s;
+    }).join(",");
+  }
+
+  // Liniile valide din foaia aleasă, după maparea curentă a coloanelor.
+  function extractRows(ctx) {
+    var rows = ctx.sheets[ctx.sheetIdx].rows;
+    var out = [];
+    var total = 0;
+    for (var i = ctx.headerRow + 1; i < rows.length; i++) {
+      var row = rows[i];
+      if (isEmptyRow(row)) continue;
+      total++;
+      var cod = cellText(row, ctx.map.cod);
+      var qty = ctx.map.qty >= 0 ? parseQty(row[ctx.map.qty]) : NaN;
+      if (!cod || !isFinite(qty) || qty <= 0) continue;
+      out.push({
+        cod: cod,
+        name: cellText(row, ctx.map.name),
+        qty: qty,
+        nr: ctx.map.nr >= 0 ? cellText(row, ctx.map.nr) : (ctx.invNr || "").trim(),
+        date: ctx.map.date >= 0 ? cellText(row, ctx.map.date) : (ctx.invDate || "").trim()
+      });
+    }
+    return { rows: out, skipped: total - out.length };
+  }
+
+  // Câmpurile obligatorii pe care nu le-am găsit în fișier (numărul facturii se poate și scrie de mână).
+  function missingFields(ctx) {
+    var inv = ctx.mode === "invoice";
+    var missing = [];
+    if (ctx.map.cod < 0) missing.push(t("impColCode"));
+    if (ctx.map.qty < 0) missing.push(t(inv ? "impColQtyDel" : "impColQty"));
+    return missing;
+  }
+
+  function colLetter(i) {
+    var s = "";
+    i++;
+    while (i > 0) { var m = (i - 1) % 26; s = String.fromCharCode(65 + m) + s; i = Math.floor((i - 1) / 26); }
+    return s;
+  }
+
+  function mapSelect(ctx, field, label) {
+    var rows = ctx.sheets[ctx.sheetIdx].rows;
+    var n = sheetCols(ctx);
+    var headRow = ctx.headerRow >= 0 ? rows[ctx.headerRow] || [] : [];
+    var sampleRow = rows[ctx.headerRow + 1] || [];
+    var opts = '<option value="-1"' + (ctx.map[field] === -1 ? " selected" : "") + '>' + escapeHtml(t("impNone")) + '</option>';
+    for (var i = 0; i < n; i++) {
+      var head = headRow[i] == null ? "" : String(headRow[i]).trim();
+      var sample = cellText(sampleRow, i);
+      var lab = (head || t("impColumn", { n: colLetter(i) })) + (sample ? " · " + sample.slice(0, 18) : "");
+      opts += '<option value="' + i + '"' + (ctx.map[field] === i ? " selected" : "") + '>' + escapeHtml(lab) + '</option>';
+    }
+    return '<div class="field"><label>' + label + '</label><select data-imp-map="' + field + '">' + opts + '</select></div>';
+  }
+
+  function reqItem(label, required, extra) {
+    return '<li><strong>' + label + '</strong> <span class="' + (required ? "req" : "opt") + '">' + t(required ? "impReq" : "impOpt") + '</span>' +
+      (extra ? ' <span class="imp-muted">' + extra + '</span>' : '') + '</li>';
+  }
+
+  // Pasul 1: ce trebuie să conțină fișierul. Pasul 2: verificare + previzualizare.
+  function renderImport() {
+    var ctx = importCtx;
+    if (!ctx) return;
+    var inv = ctx.mode === "invoice";
+    $("imp-title").textContent = t(inv ? "impTitleInvoice" : "impTitleOrder");
+    $("imp-local").textContent = t("impLocal");
+    $("imp-cancel").textContent = t("impCancel");
+    $("imp-confirm").textContent = t(inv ? "impConfirmInvoice" : "impConfirmOrder");
+
+    var html = ctx.error ? '<p class="imp-warn">' + escapeHtml(ctx.error) + '</p>' : "";
+
+    if (ctx.stage === "pick") {
+      $("imp-confirm").hidden = true;
+      html += '<p>' + t(inv ? "impReqIntroInvoice" : "impReqIntroOrder") + '</p><ul class="imp-reqs">' +
+        reqItem(t("impColCode"), true) +
+        reqItem(t(inv ? "impColQtyDel" : "impColQty"), true) +
+        (inv ? reqItem(t("impColInv"), true, t("impReqNrNote")) : "") +
+        reqItem(t("impColName"), false) +
+        (inv ? reqItem(t("impColDate"), false) : "") +
+        '</ul><p class="imp-muted">' + t("impFormats") + '</p>' +
+        '<div><button class="btn btn-primary" type="button" data-imp-pick>' + t("impPick") + '</button></div>';
+      $("import-body").innerHTML = html;
+      return;
+    }
+
+    $("imp-confirm").hidden = false;
+    var missing = missingFields(ctx);
+    html += '<p class="imp-file">' + escapeHtml(t("impFile", { name: ctx.fileName })) +
+      ' <button class="link-btn" type="button" data-imp-pick>' + t("impPickOther") + '</button></p>';
+    if (ctx.sheets.length > 1) {
+      html += '<div class="field"><label>' + t("impSheet") + '</label><select data-imp-sheet>' +
+        ctx.sheets.map(function (s, i) {
+          return '<option value="' + i + '"' + (i === ctx.sheetIdx ? " selected" : "") + '>' + escapeHtml(s.name) + '</option>';
+        }).join("") + '</select></div>';
+    }
+    if (missing.length) html += '<p class="imp-warn">' + escapeHtml(t("impMissing", { fields: missing.join(", ") })) + '</p>';
+    html += '<details class="imp-cols"' + (missing.length ? " open" : "") + '><summary>' + t("impChangeCols") + '</summary><div class="imp-grid">' +
+      mapSelect(ctx, "cod", t("impColCode")) +
+      mapSelect(ctx, "name", t("impColName")) +
+      mapSelect(ctx, "qty", t(inv ? "impColQtyDel" : "impColQty")) +
+      (inv ? mapSelect(ctx, "nr", t("impColInv")) + mapSelect(ctx, "date", t("impColDate")) : "") +
+      '</div></details>';
+    if (!inv) {
+      html += '<div class="field"><label>' + t("impOrderName") + '</label>' +
+        '<input type="text" data-imp-text="orderName" value="' + escapeHtml(ctx.orderName) + '"></div>';
+    } else {
+      html += '<div class="imp-grid">' +
+        '<div class="field"><label>' + t("impInvNr") + '</label>' +
+        '<input type="text" data-imp-text="invNr" value="' + escapeHtml(ctx.invNr) + '"' + (ctx.map.nr >= 0 ? " disabled" : "") + '>' +
+        '<p class="hint">' + t(ctx.map.nr >= 0 ? "impInvFromCol" : "impInvNrHint") + '</p></div>' +
+        '<div class="field"><label>' + t("impInvDate") + '</label>' +
+        '<input type="text" data-imp-text="invDate" value="' + escapeHtml(ctx.invDate) + '"' + (ctx.map.date >= 0 ? " disabled" : "") + ' placeholder="2026-10-05"></div>' +
+        '</div>';
+    }
+    html += '<div id="imp-preview"></div>';
+    $("import-body").innerHTML = html;
+    updateImportState();
+  }
+
+  function updateImportState() {
+    var ctx = importCtx;
+    if (!ctx || ctx.stage !== "preview") return;
+    var inv = ctx.mode === "invoice";
+    var ex = extractRows(ctx);
+    var nrOk = !inv || ctx.map.nr >= 0 || !!normNr(ctx.invNr);
+    var ready = ex.rows.length > 0 && nrOk && !missingFields(ctx).length;
+    var html = '<p class="imp-sub"><strong>' + t("impPreview", { n: ex.rows.length }) + '</strong>' +
+      (ex.skipped ? ' <span class="imp-muted">· ' + t("impSkipped", { n: ex.skipped }) + '</span>' : '') + '</p>';
+    if (!ex.rows.length) {
+      html += '<p class="imp-warn">' + t("impNoRows") + '</p>';
+    } else {
+      html += '<div class="table-scroll"><table class="imp-table"><thead><tr><th>' + t("impColCode") + '</th><th>' + t("impColName") + '</th><th class="qty-cell">' + t(inv ? "impColQtyDel" : "impColQty") + '</th>' +
+        (inv ? '<th>' + t("impColInv") + '</th><th>' + t("impColDate") + '</th>' : '') + '</tr></thead><tbody>' +
+        ex.rows.slice(0, 8).map(function (r) {
+          return '<tr><td class="mono">' + escapeHtml(r.cod) + '</td><td>' + escapeHtml(r.name) + '</td><td class="qty-cell mono">' + r.qty + '</td>' +
+            (inv ? '<td class="mono">' + escapeHtml(r.nr) + '</td><td>' + escapeHtml(r.date) + '</td>' : '') + '</tr>';
+        }).join("") + '</tbody></table></div>' +
+        (ex.rows.length > 8 ? '<p class="imp-muted">' + t("impMore", { n: ex.rows.length - 8 }) + '</p>' : '');
+    }
+    if (inv && !nrOk) html += '<p class="imp-warn">' + t("impInvNrHint") + '</p>';
+    $("imp-preview").innerHTML = html;
+    $("imp-confirm").disabled = !ready;
+  }
+
+  function stripExt(name) { return name.replace(/\.[^.]+$/, ""); }
+
+  // Butonul "Creează comandă nouă" / "Adaugă factură parțială": deschide fereastra cu câmpurile obligatorii.
+  function startImport(mode, orderId) {
+    autoInvoiceOrderId = null;
+    importCtx = { mode: mode, orderId: orderId, stage: "pick", error: "" };
+    renderImport();
+    var dlg = $("import-dialog");
+    if (!dlg.open) dlg.showModal();
+  }
+
+  function openImport(file) {
+    var prev = importCtx;
+    if (!prev) return;
+    readTableFromFile(file).then(function (sheets) {
+      if (!importCtx) return; // fereastra a fost închisă între timp
+      if (!sheets.length) { importCtx.error = t("impEmpty"); renderImport(); return; }
+      importCtx = { mode: prev.mode, orderId: prev.orderId, stage: "preview", error: "", fileName: file.name, sheets: sheets, sheetIdx: 0, headerRow: -1, map: {}, orderName: stripExt(file.name), invNr: "", invDate: "" };
+      detectForSheet(importCtx);
+      renderImport();
+    }).catch(function (err) {
+      if (!importCtx) return;
+      importCtx.error = err && err.message === "sheetjs" ? t("impLibError") : t("impReadError", { err: (err && err.message) || "?" });
+      renderImport();
+    });
+  }
+
+  function closeImport() {
+    var dlg = $("import-dialog");
+    if (dlg.open) dlg.close();
+    importCtx = null;
+  }
+
+  function confirmImport() {
+    var ctx = importCtx;
+    if (!ctx || ctx.stage !== "preview") return;
+    var ex = extractRows(ctx);
+    if (!ex.rows.length || missingFields(ctx).length) return;
+    if (ctx.mode === "order") {
+      var csv = "cod_piesa,denumire,cantitate_comandata\n" + ex.rows.map(function (r) { return toCsvLine([r.cod, r.name, r.qty]); }).join("\n");
+      var order = newOrderFromCsv((ctx.orderName || "").trim(), csv);
+      if (!order) return;
+      state.orders.push(order);
+      closeImport();
+      render();
+      showToast(t("orderCreated", { name: order.name, lines: linesLabel(order.lines.length) }));
+    } else {
+      var icsv = "cod_piesa,denumire,cantitate_livrata,nr_factura,data\n" + ex.rows.map(function (r) { return toCsvLine([r.cod, r.name, r.qty, r.nr, r.date]); }).join("\n");
+      var id = ctx.orderId;
+      closeImport();
+      submitDelivery(id, icsv);
+    }
+  }
+
+  // ---- factură parțială: se adaugă singură în comanda ei, imediat după alegerea fișierului ----
+  var autoInvoiceOrderId = null;
+
+  function orderMessage(orderId, text) {
+    var host = document.querySelector('[data-delivery-msg="' + orderId + '"]');
+    if (host) host.innerHTML = '<div class="banner warn" style="margin-top:8px;"><span>⚠</span><div>' + escapeHtml(text) + '</div></div>';
+  }
+
+  function addInvoiceFromFile(orderId, file) {
+    if (!/\.(xlsx|xls|xlsm|ods|csv|tsv|txt)$/i.test(file.name)) {
+      orderMessage(orderId, t("autoUnsupported", { name: file.name }));
+      return;
+    }
+    readTableFromFile(file).then(function (sheets) {
+      if (!sheets.length) { orderMessage(orderId, t("impEmpty")); return; }
+      var mk = function (i) { return { mode: "invoice", sheets: sheets, sheetIdx: i, headerRow: -1, map: {}, invNr: "", invDate: "" }; };
+      var ctx = null;
+      for (var i = 0; i < sheets.length && !ctx; i++) {
+        var c = mk(i);
+        detectForSheet(c);
+        if (!missingFields(c).length) ctx = c;
+      }
+      if (!ctx) {
+        var c0 = mk(0);
+        detectForSheet(c0);
+        orderMessage(orderId, t("autoMissing", { name: file.name, fields: missingFields(c0).join(", ") }));
+        return;
+      }
+      // Fără coloană cu numărul facturii: folosim numele fișierului (numărul e cel care oprește dublarea).
+      var fromName = ctx.map.nr < 0;
+      if (fromName) ctx.invNr = stripExt(file.name);
+      var ex = extractRows(ctx);
+      if (!ex.rows.length) { orderMessage(orderId, t("impNoRows")); return; }
+      var csv = "cod_piesa,denumire,cantitate_livrata,nr_factura,data\n" +
+        ex.rows.map(function (r) { return toCsvLine([r.cod, r.name, r.qty, r.nr, r.date]); }).join("\n");
+      submitDelivery(orderId, csv);
+      if (fromName) {
+        var host = document.querySelector('[data-delivery-msg="' + orderId + '"]');
+        if (host) host.insertAdjacentHTML("beforeend", '<p class="note" style="margin-top:8px;">' + escapeHtml(t("autoNrFromName", { nr: ctx.invNr })) + '</p>');
+      }
+    }).catch(function (err) {
+      orderMessage(orderId, err && err.message === "sheetjs" ? t("impLibError") : t("impReadError", { err: (err && err.message) || "?" }));
+    });
+  }
+
+  function wireImportEvents() {
+    $("file-import").addEventListener("change", function (e) {
+      var file = e.target.files && e.target.files[0];
+      e.target.value = "";
+      if (!file) return;
+      var invoiceOrder = autoInvoiceOrderId;
+      autoInvoiceOrderId = null;
+      if (invoiceOrder) addInvoiceFromFile(invoiceOrder, file);
+      else openImport(file);
+    });
+    var dlg = $("import-dialog");
+    dlg.addEventListener("click", function (e) {
+      if (e.target.closest("[data-imp-pick]")) $("file-import").click();
+    });
+    dlg.addEventListener("change", function (e) {
+      if (!importCtx || importCtx.stage !== "preview") return;
+      var el = e.target;
+      if (el.matches("[data-imp-map]")) {
+        importCtx.map[el.getAttribute("data-imp-map")] = parseInt(el.value, 10);
+        renderImport();
+      } else if (el.matches("[data-imp-sheet]")) {
+        importCtx.sheetIdx = parseInt(el.value, 10);
+        detectForSheet(importCtx);
+        renderImport();
+      }
+    });
+    dlg.addEventListener("input", function (e) {
+      var key = e.target.getAttribute && e.target.getAttribute("data-imp-text");
+      if (!key || !importCtx) return;
+      importCtx[key] = e.target.value;
+      updateImportState();
+    });
+    $("imp-cancel").addEventListener("click", closeImport);
+    $("imp-confirm").addEventListener("click", confirmImport);
+    // Evenimentul "close" vine puțin după închidere; nu ștergem starea dacă s-a redeschis între timp.
+    dlg.addEventListener("close", function () { if (!dlg.open) importCtx = null; });
   }
 
   // Adaugă o factură (text CSV) pe o comandă. Același drum pentru caseta de lipire și pentru facturile demo.
@@ -1207,11 +1673,7 @@
       if (msgHost) msgHost.innerHTML = '<p class="note" style="color:var(--danger);margin-top:6px;">' + t("noValidLinesDelivery") + '</p>';
       return;
     }
-    // Dacă totul a fost duplicat, lăsăm textul în casetă ca să vezi ce ai lipit.
-    var keepText = (result.matched || result.unmatched.length) ? "" : text;
     render();
-    var newInput = document.querySelector('[data-delivery-input="' + orderId + '"]');
-    if (newInput) newInput.value = keepText;
 
     var banners = "";
     if (result.duplicates.length) {
@@ -1243,6 +1705,13 @@
 
   function wireDynamicEvents() {
     document.addEventListener("click", function (e) {
+      if (e.target.closest("[data-import-order]")) { startImport("order"); return; }
+      var impInv = e.target.closest("[data-import-invoice]");
+      if (impInv) {
+        autoInvoiceOrderId = impInv.getAttribute("data-import-invoice");
+        $("file-import").click();
+        return;
+      }
       var histBtn = e.target.closest("[data-toggle-hist]");
       if (histBtn) {
         var id = histBtn.getAttribute("data-toggle-hist");
@@ -1250,16 +1719,11 @@
         if (row) row.classList.toggle("hidden");
         return;
       }
-      var addBtn = e.target.closest("[data-add-delivery]");
-      if (addBtn) {
-        var addId = addBtn.getAttribute("data-add-delivery");
-        var inp = document.querySelector('[data-delivery-input="' + addId + '"]');
-        if (inp) submitDelivery(addId, inp.value);
-        return;
-      }
       var demoBtn = e.target.closest("[data-demo-invoice]");
       if (demoBtn) {
-        submitDelivery(demoBtn.getAttribute("data-demo-order"), demoInvoiceCsv(parseInt(demoBtn.getAttribute("data-demo-invoice"), 10)));
+        var dOrderId = demoBtn.getAttribute("data-demo-order");
+        var dOrder = state.orders.find(function (o) { return o.id === dOrderId; });
+        if (dOrder) submitDelivery(dOrderId, demoInvoiceCsv(dOrder, parseInt(demoBtn.getAttribute("data-demo-invoice"), 10)));
         return;
       }
       var delBtn = e.target.closest("[data-delete-order]");
@@ -1293,6 +1757,7 @@
   restore();
   wireStaticEvents();
   wireDynamicEvents();
+  wireImportEvents();
   applyLang();
   render();
 })();
