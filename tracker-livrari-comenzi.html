@@ -1,105 +1,50 @@
+<!doctype html>
+<html lang="ro">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=Instrument+Sans:wght@400;600&display=swap" rel="stylesheet">
 <title>Tracker Livrări Comenzi</title>
 <style>
+  /* Stil: "stilul-meu-design.md" — hârtie crem, navy, un singur accent portocaliu, colțuri drepte */
   :root {
-    --bg: #edf0f3;
-    --surface: #ffffff;
-    --surface-2: #f5f7f9;
-    --text: #171b21;
-    --text-muted: #5b6572;
-    --border: #d7dce1;
-    --accent: #2e5c8a;
-    --accent-strong: #1f4266;
-    --accent-soft: #e4ecf3;
-    --ok: #1f7a46;
-    --ok-soft: #e3f3e8;
-    --warn: #9c6510;
-    --warn-soft: #fbf0dd;
-    --pending: #5b6572;
-    --pending-soft: #eef0f2;
-    --danger: #a63229;
-    --danger-soft: #fbe7e5;
-    --shadow: 0 1px 2px rgba(23, 27, 33, 0.06), 0 4px 14px rgba(23, 27, 33, 0.05);
-    --radius: 10px;
+    --paper: #fff7e5;
+    --surface: #fffbf2;
+    --ink: #020c36;
+    --muted: #4b5578;
+    --line: #e9dfc8;
+    --primary: #0f2c67;
+    --accent: #ea580c;
+    --soft: #f6ebd0;
+
+    --good: #276d09;
+    --mid: #f0b005;
+    --low: #a6392b;
+    --idle: #c9b98f; /* "neînceput": bej-nisip, ca să nu semene cu verdele sau albastrul */
+
+    --accent-text: color-mix(in srgb, var(--accent) 78%, var(--ink));
+    --danger: var(--low);
+
+    --font-head: "Bricolage Grotesque", system-ui, sans-serif;
+    --font-body: "Instrument Sans", system-ui, sans-serif;
   }
 
-  @media (prefers-color-scheme: dark) {
-    :root:not([data-theme="light"]) {
-      --bg: #10151b;
-      --surface: #1a2028;
-      --surface-2: #212832;
-      --text: #e7eaee;
-      --text-muted: #9aa4b2;
-      --border: #2b333e;
-      --accent: #7fb0dd;
-      --accent-strong: #a9cceb;
-      --accent-soft: #1f2e3e;
-      --ok: #58b47c;
-      --ok-soft: #1b2e22;
-      --warn: #dcaa4f;
-      --warn-soft: #332a19;
-      --pending: #98a1af;
-      --pending-soft: #232933;
-      --danger: #e28a83;
-      --danger-soft: #33201f;
-      --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 20px rgba(0, 0, 0, 0.28);
-    }
-  }
-  :root[data-theme="dark"] {
-    --bg: #10151b;
-    --surface: #1a2028;
-    --surface-2: #212832;
-    --text: #e7eaee;
-    --text-muted: #9aa4b2;
-    --border: #2b333e;
-    --accent: #7fb0dd;
-    --accent-strong: #a9cceb;
-    --accent-soft: #1f2e3e;
-    --ok: #58b47c;
-    --ok-soft: #1b2e22;
-    --warn: #dcaa4f;
-    --warn-soft: #332a19;
-    --pending: #98a1af;
-    --pending-soft: #232933;
-    --danger: #e28a83;
-    --danger-soft: #33201f;
-    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 20px rgba(0, 0, 0, 0.28);
-  }
-  :root[data-theme="light"] {
-    --bg: #edf0f3;
-    --surface: #ffffff;
-    --surface-2: #f5f7f9;
-    --text: #171b21;
-    --text-muted: #5b6572;
-    --border: #d7dce1;
-    --accent: #2e5c8a;
-    --accent-strong: #1f4266;
-    --accent-soft: #e4ecf3;
-    --ok: #1f7a46;
-    --ok-soft: #e3f3e8;
-    --warn: #9c6510;
-    --warn-soft: #fbf0dd;
-    --pending: #5b6572;
-    --pending-soft: #eef0f2;
-    --danger: #a63229;
-    --danger-soft: #fbe7e5;
-    --shadow: 0 1px 2px rgba(23, 27, 33, 0.06), 0 4px 14px rgba(23, 27, 33, 0.05);
-  }
-
-  * { box-sizing: border-box; }
+  * { box-sizing: border-box; border-radius: 0; }
   html, body {
     margin: 0;
     padding: 0;
-    background: var(--bg);
-    color: var(--text);
-    font: 15px/1.55 -apple-system, "Segoe UI", "Segoe UI Variable", system-ui, Roboto, sans-serif;
+    background: var(--paper);
+    color: var(--ink);
+    font: 15px/1.55 var(--font-body);
     -webkit-font-smoothing: antialiased;
   }
   body { overflow-x: hidden; }
 
-  h1, h2, h3, .label-face {
-    font-family: "Bahnschrift", "Arial Narrow", "Segoe UI Semibold", sans-serif;
+  h1, h2, h3 {
+    font-family: var(--font-head);
     font-weight: 600;
-    letter-spacing: 0.01em;
+    letter-spacing: -0.01em;
     text-wrap: balance;
   }
 
@@ -108,7 +53,7 @@
     font-variant-numeric: tabular-nums;
   }
 
-  a { color: var(--accent); }
+  a { color: var(--primary); }
   button { font: inherit; }
   :focus-visible {
     outline: 2px solid var(--accent);
@@ -116,12 +61,12 @@
   }
 
   .wrap {
-    max-width: 1080px;
+    max-width: 1024px;
     margin: 0 auto;
-    padding: 28px 20px 64px;
+    padding: 32px 20px 64px;
     display: flex;
     flex-direction: column;
-    gap: 28px;
+    gap: 40px;
   }
 
   /* header */
@@ -129,26 +74,57 @@
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
-    gap: 16px;
+    gap: 20px;
     flex-wrap: wrap;
   }
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 0 0 14px;
+  }
+  .logo {
+    width: 38px;
+    height: 38px;
+    background: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+  }
+  .logo i {
+    width: 16px;
+    height: 16px;
+    border: 3px solid var(--accent);
+    display: block;
+  }
   .brand-eyebrow {
-    font-family: "Bahnschrift", "Arial Narrow", sans-serif;
-    font-size: 11.5px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--accent);
-    margin: 0 0 4px;
+    font-family: var(--font-head);
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    font-size: 15px;
+    color: var(--ink);
+    margin: 0;
   }
   .topbar h1 {
     margin: 0;
-    font-size: 27px;
+    font-size: 30px;
+    line-height: 1.1;
+  }
+  @media (min-width: 640px) {
+    .topbar h1 { font-size: 36px; }
+  }
+  .topbar h1 .key {
+    text-decoration: underline;
+    text-decoration-color: var(--accent);
+    text-decoration-thickness: 4px;
+    text-underline-offset: 8px;
   }
   .topbar .sub {
-    margin: 6px 0 0;
-    color: var(--text-muted);
-    max-width: 54ch;
-    font-size: 14px;
+    margin: 14px 0 0;
+    color: var(--muted);
+    max-width: 56ch;
+    font-size: 16px;
   }
   .topbar-actions {
     display: flex;
@@ -160,36 +136,32 @@
     display: inline-flex;
     align-items: center;
     gap: 6px;
-    border-radius: 8px;
-    border: 1px solid var(--border);
+    border: 1px solid var(--line);
     background: var(--surface);
-    color: var(--text);
-    padding: 9px 14px;
-    font-size: 13.5px;
+    color: var(--ink);
+    padding: 10px 18px;
+    font-size: 14px;
     font-weight: 600;
     cursor: pointer;
-    transition: border-color 0.15s ease, background 0.15s ease, transform 0.05s ease;
+    transition: opacity 0.15s ease, border-color 0.15s ease;
     white-space: nowrap;
   }
-  .btn:hover { border-color: var(--accent); }
-  .btn:active { transform: translateY(1px); }
+  .btn:hover { border-color: var(--primary); }
   .btn-primary {
-    background: var(--accent);
-    border-color: var(--accent);
+    background: var(--primary);
+    border-color: var(--primary);
     color: #fff;
   }
-  .btn-primary:hover { background: var(--accent-strong); border-color: var(--accent-strong); }
+  .btn-primary:hover { opacity: 0.9; }
   .btn-ghost { background: transparent; }
-  .btn-sm { padding: 6px 10px; font-size: 12.5px; }
+  .btn-sm { padding: 6px 12px; font-size: 13px; }
   .btn[disabled] { opacity: 0.5; cursor: not-allowed; }
   input[type="file"] { display: none; }
 
-  /* generic panel */
+  /* generic panel = card */
   .panel {
     background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    box-shadow: var(--shadow);
+    border: 1px solid var(--line);
   }
 
   /* workflow steps */
@@ -202,26 +174,20 @@
     .steps { grid-template-columns: 1fr; }
   }
   .step {
-    padding: 18px 18px 20px;
+    padding: 20px;
     display: flex;
     flex-direction: column;
     gap: 10px;
   }
   .step-num {
-    width: 26px;
-    height: 26px;
-    border-radius: 7px;
-    background: var(--accent-soft);
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: 30px;
+    line-height: 1;
     color: var(--accent);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-family: "Bahnschrift", "Arial Narrow", sans-serif;
-    font-weight: 700;
-    font-size: 13px;
   }
-  .step h3 { margin: 0; font-size: 15.5px; }
-  .step p { margin: 0; color: var(--text-muted); font-size: 13.5px; }
+  .step h3 { margin: 0; font-size: 20px; }
+  .step p { margin: 0; color: var(--muted); font-size: 14px; max-width: 60ch; }
   .prompt-box {
     position: relative;
   }
@@ -229,11 +195,10 @@
     width: 100%;
     resize: vertical;
     min-height: 130px;
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text);
-    padding: 10px 11px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    color: var(--ink);
+    padding: 10px 12px;
     font-size: 12px;
     line-height: 1.5;
   }
@@ -247,77 +212,79 @@
     gap: 12px;
     flex-wrap: wrap;
   }
-  .section-head h2 { margin: 0; font-size: 17px; }
+  .section-head h2 { margin: 0; font-size: 22px; }
   .section-head .count {
-    color: var(--text-muted);
+    color: var(--muted);
     font-size: 13px;
   }
 
-  /* summary tiles */
+  /* summary tiles — semafor: bară colorată + etichetă în cuvinte + număr */
   .tiles {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: 10px;
+    gap: 12px;
   }
   @media (max-width: 640px) {
     .tiles { grid-template-columns: repeat(2, 1fr); }
   }
   .tile {
-    padding: 14px 14px 12px;
-    border-radius: var(--radius);
-    border: 1px solid var(--border);
+    padding: 16px 18px;
+    border: 1px solid var(--line);
+    border-left: 6px solid var(--muted);
     background: var(--surface);
   }
   .tile .n {
-    font-family: "Bahnschrift", "Arial Narrow", sans-serif;
-    font-size: 26px;
+    font-family: var(--font-head);
+    font-weight: 600;
+    font-size: 30px;
     font-variant-numeric: tabular-nums;
     line-height: 1;
+    color: var(--ink);
   }
   .tile .l {
-    margin-top: 6px;
+    margin-top: 8px;
     font-size: 12px;
-    color: var(--text-muted);
+    font-weight: 600;
+    color: var(--muted);
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 0.06em;
   }
-  .tile.ok .n { color: var(--ok); }
-  .tile.warn .n { color: var(--warn); }
-  .tile.pending .n { color: var(--pending); }
-  .tile.danger .n { color: var(--danger); }
+  .tile.ok { border-left-color: var(--good); }
+  .tile.warn { border-left-color: var(--mid); }
+  .tile.pending { border-left-color: var(--idle); }
+  .tile.danger { border-left-color: var(--low); }
 
   /* new order form */
-  .form-panel { padding: 18px; display: flex; flex-direction: column; gap: 12px; }
-  .field { display: flex; flex-direction: column; gap: 5px; }
-  .field label { font-size: 12.5px; font-weight: 600; color: var(--text-muted); }
+  .form-panel { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label { font-size: 12px; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.06em; }
   .field input[type="text"], .field textarea, .field select {
-    background: var(--surface-2);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text);
-    padding: 9px 10px;
-    font-size: 13.5px;
+    background: var(--paper);
+    border: 1px solid var(--line);
+    color: var(--ink);
+    padding: 10px 12px;
+    font-size: 14px;
     width: 100%;
   }
   .field textarea { min-height: 90px; resize: vertical; font-size: 12.5px; }
-  .field .hint { font-size: 12px; color: var(--text-muted); }
+  .field .hint { font-size: 12px; color: var(--muted); }
   .form-row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
 
   /* empty state */
   .empty {
-    padding: 34px 20px;
+    padding: 36px 20px;
     text-align: center;
-    color: var(--text-muted);
+    color: var(--muted);
     font-size: 14px;
   }
 
   /* order cards */
-  .orders { display: flex; flex-direction: column; gap: 14px; }
+  .orders { display: flex; flex-direction: column; gap: 16px; }
   .order-card { overflow: hidden; }
   .order-card > summary {
     list-style: none;
     cursor: pointer;
-    padding: 14px 18px;
+    padding: 16px 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -327,86 +294,98 @@
   .order-card > summary::-webkit-details-marker { display: none; }
   .order-title { display: flex; align-items: center; gap: 10px; min-width: 0; }
   .order-title .chev {
-    color: var(--text-muted);
+    color: var(--muted);
     transition: transform 0.15s ease;
     flex: none;
   }
   .order-card[open] .chev { transform: rotate(90deg); }
-  .order-title h3 { margin: 0; font-size: 15px; }
-  .order-meta { font-size: 12px; color: var(--text-muted); white-space: nowrap; }
+  .order-title h3 { margin: 0; font-size: 18px; }
+  .order-meta { font-size: 12px; color: var(--muted); white-space: nowrap; }
   .order-stats { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  /* etichetă (tag): fundal soft, text ink; pătrățel colorat + cuvânt */
   .chip {
     display: inline-flex;
     align-items: center;
-    gap: 5px;
-    padding: 3px 9px;
-    border-radius: 999px;
-    font-size: 11.5px;
-    font-weight: 700;
+    gap: 6px;
+    padding: 2px 10px;
+    background: var(--soft);
+    color: var(--ink);
+    font-size: 12px;
+    font-weight: 600;
     font-variant-numeric: tabular-nums;
   }
-  .chip.ok { background: var(--ok-soft); color: var(--ok); }
-  .chip.warn { background: var(--warn-soft); color: var(--warn); }
-  .chip.pending { background: var(--pending-soft); color: var(--pending); }
-  .chip.danger { background: var(--danger-soft); color: var(--danger); }
-  .chip .dot { width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+  .chip .dot { width: 8px; height: 8px; background: var(--muted); flex: none; }
+  .chip.ok .dot { background: var(--good); }
+  .chip.warn .dot { background: var(--mid); }
+  .chip.pending .dot { background: transparent; border: 2px solid var(--muted); }
+  .chip.danger .dot { background: var(--low); }
 
-  .order-body { border-top: 1px solid var(--border); padding: 14px 18px 18px; display: flex; flex-direction: column; gap: 14px; }
-  .add-delivery { padding: 12px; background: var(--surface-2); border: 1px dashed var(--border); border-radius: 8px; display: flex; flex-direction: column; gap: 8px; }
+  .order-body { border-top: 1px solid var(--line); padding: 20px; display: flex; flex-direction: column; gap: 16px; }
+  .add-delivery { padding: 14px; background: var(--paper); border: 1px dashed var(--line); display: flex; flex-direction: column; gap: 8px; }
   .add-delivery .form-row { align-items: stretch; }
-  .add-delivery textarea { flex: 1; min-width: 220px; }
+  .add-delivery textarea {
+    flex: 1;
+    min-width: 220px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    color: var(--ink);
+    padding: 10px 12px;
+    font-size: 12.5px;
+  }
 
-  .table-scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: 8px; }
+  .table-scroll { overflow-x: auto; border: 1px solid var(--line); }
   table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 620px; }
   thead th {
     text-align: left;
-    font-size: 11px;
+    font-size: 12px;
+    font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--text-muted);
-    background: var(--surface-2);
-    padding: 9px 12px;
-    border-bottom: 1px solid var(--border);
+    letter-spacing: 0.06em;
+    color: var(--muted);
+    background: var(--soft);
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
     white-space: nowrap;
   }
   tbody td {
-    padding: 9px 12px;
-    border-bottom: 1px solid var(--border);
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--line);
     vertical-align: top;
   }
   tbody tr:last-child td { border-bottom: none; }
   td.qty-cell { text-align: right; }
   th.qty-cell { text-align: right; }
-  .part-name { color: var(--text-muted); font-size: 12.5px; }
+  .part-name { color: var(--muted); font-size: 13px; }
   .hist-toggle {
-    background: none; border: none; color: var(--accent); font-size: 12px; cursor: pointer;
-    padding: 2px 0; font-weight: 600;
+    background: none; border: none; color: var(--primary); font-size: 12px; cursor: pointer;
+    padding: 2px 0; font-weight: 600; text-decoration: underline;
   }
   .hist-row td { padding: 0 12px 10px; }
   .hist-row.hidden { display: none; }
-  .hist-list { margin: 0; padding: 8px 10px; background: var(--surface-2); border-radius: 6px; font-size: 12px; color: var(--text-muted); display: flex; flex-direction: column; gap: 3px; }
+  .hist-list { margin: 0; padding: 8px 10px; background: var(--paper); border: 1px solid var(--line); font-size: 12px; color: var(--muted); display: flex; flex-direction: column; gap: 3px; }
   .hist-list .row { display: flex; justify-content: space-between; gap: 10px; }
 
   .banner {
     display: flex;
     gap: 10px;
     align-items: flex-start;
-    padding: 11px 13px;
-    border-radius: 8px;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-left: 6px solid var(--mid);
+    background: var(--surface);
+    color: var(--ink);
     font-size: 13px;
   }
-  .banner.danger { background: var(--danger-soft); color: var(--danger); }
-  .banner.warn { background: var(--warn-soft); color: var(--warn); }
+  .banner.danger { border-left-color: var(--low); }
+  .banner.warn { border-left-color: var(--mid); }
   .banner ul { margin: 4px 0 0; padding-left: 18px; }
   .unmatched-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
   .unmatched-row .btn { flex: none; }
 
   .note {
-    font-size: 12px;
-    color: var(--text-muted);
-    display: flex;
-    gap: 7px;
-    align-items: flex-start;
+    font-size: 13px;
+    color: var(--muted);
   }
 
   /* toast */
@@ -420,16 +399,14 @@
     z-index: 50;
   }
   .toast {
-    background: var(--text);
-    color: var(--bg);
-    padding: 10px 14px;
-    border-radius: 8px;
+    background: var(--ink);
+    color: var(--paper);
+    padding: 12px 16px;
     font-size: 13px;
-    box-shadow: var(--shadow);
     max-width: 320px;
     animation: toast-in 0.18s ease;
   }
-  .toast.err { background: var(--danger); color: #fff; }
+  .toast.err { background: var(--low); color: #fff; }
   @keyframes toast-in {
     from { opacity: 0; transform: translateY(6px); }
     to { opacity: 1; transform: translateY(0); }
@@ -440,9 +417,10 @@
 
   footer.hint-footer {
     text-align: center;
-    color: var(--text-muted);
+    color: var(--muted);
     font-size: 12px;
-    padding-top: 6px;
+    border-top: 1px solid var(--line);
+    padding-top: 16px;
   }
 </style>
 
@@ -450,11 +428,15 @@
 
   <div class="topbar">
     <div>
-      <p class="brand-eyebrow">Piese Auto · Aprovizionare</p>
-      <h1>Tracker Livrări Comenzi</h1>
+      <div class="brand">
+        <span class="logo" aria-hidden="true"><i></i></span>
+        <p class="brand-eyebrow">Piese Auto · Aprovizionare</p>
+      </div>
+      <h1>Tracker <span class="key">Livrări</span> Comenzi</h1>
       <p class="sub">Urmărește ce s-a livrat față de ce ai comandat, comandă cu comandă, fără să mai deschizi fiecare factură manual.</p>
     </div>
     <div class="topbar-actions">
+      <button class="btn" id="btn-demo" type="button">Încearcă cu un exemplu</button>
       <button class="btn" id="btn-load" type="button">Încarcă progres</button>
       <input type="file" id="file-load" accept="application/json,.json" />
       <button class="btn btn-primary" id="btn-save" type="button">Salvează progres</button>
@@ -475,7 +457,7 @@
       <div class="step-num">2</div>
       <h3>Lipește rezultatul aici</h3>
       <p>Copiază CSV-ul primit de la Claude și folosește-l ca să creezi o comandă nouă mai jos, sau ca să adaugi o livrare pe o comandă existentă. Aplicația face potrivirea automat, pe cod de piesă.</p>
-      <p class="note">⚠ Datele stau doar în această pagină — apasă <strong>Salvează progres</strong> înainte să închizi, ca să nu pierzi ce ai introdus.</p>
+      <p class="note">Datele se salvează automat în acest browser. Ca să le muți pe alt calculator sau să ai o copie de siguranță, apasă <strong>Salvează progres</strong>.</p>
     </div>
   </section>
 
@@ -510,7 +492,7 @@
     <div class="orders" id="orders-list"></div>
   </section>
 
-  <footer class="hint-footer">Tracker local · datele rămân doar în această pagină până le salvezi ca fișier.</footer>
+  <footer class="hint-footer">Tracker local · datele rămân în acest browser, nu pleacă pe niciun server.</footer>
 </div>
 
 <div id="toasts"></div>
@@ -646,9 +628,23 @@
   }
 
   // ---- rendering ----
+  var STORAGE_KEY = "tracker-livrari-v1";
+
+  function persist() {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (e) { /* stocare blocată: continuăm fără autosave */ }
+  }
+
+  function restore() {
+    try {
+      var saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || "null");
+      if (saved && Array.isArray(saved.orders)) state = saved;
+    } catch (e) { /* date corupte sau stocare indisponibilă: pornim gol */ }
+  }
+
   function render() {
     renderTiles();
     renderOrders();
+    persist();
   }
 
   function allLines() {
@@ -716,10 +712,10 @@
         '<div class="order-title"><span class="chev">▸</span><div><h3>' + escapeHtml(order.name) + '</h3>' +
         '<div class="order-meta">creată ' + dateStr + ' · ' + order.lines.length + ' linii</div></div></div>' +
         '<div class="order-stats">' +
-        (counts.danger ? '<span class="chip danger"><span class="dot"></span>' + counts.danger + '</span>' : '') +
-        (counts.warn ? '<span class="chip warn"><span class="dot"></span>' + counts.warn + '</span>' : '') +
-        (counts.pending ? '<span class="chip pending"><span class="dot"></span>' + counts.pending + '</span>' : '') +
-        (counts.ok ? '<span class="chip ok"><span class="dot"></span>' + counts.ok + '</span>' : '') +
+        (counts.danger ? '<span class="chip danger"><span class="dot"></span>' + counts.danger + ' ' + statusLabel("danger") + '</span>' : '') +
+        (counts.warn ? '<span class="chip warn"><span class="dot"></span>' + counts.warn + ' ' + statusLabel("warn") + '</span>' : '') +
+        (counts.pending ? '<span class="chip pending"><span class="dot"></span>' + counts.pending + ' ' + statusLabel("pending") + '</span>' : '') +
+        (counts.ok ? '<span class="chip ok"><span class="dot"></span>' + counts.ok + ' ' + statusLabel("ok") + '</span>' : '') +
         '</div>' +
         '</summary>' +
         '<div class="order-body">' +
@@ -778,19 +774,39 @@
     });
 
     $("btn-save").addEventListener("click", function () {
-      if (!window.claude || !window.claude.downloads) {
-        showToast("Salvarea nu e disponibilă în acest mediu.", true);
-        return;
-      }
       var json = JSON.stringify(state, null, 2);
       var d = new Date();
       var stamp = d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
-      window.claude.downloads.save({ filename: "tracker-livrari-" + stamp + ".json", data: json }).then(function () {
-        showToast("Salvat. Data viitoare foloseste „Încarcă progres” cu acest fișier.");
-      }, function (err) {
-        if (err && err.code === "declined") { return; }
-        showToast("Nu am putut salva: " + (err && err.message ? err.message : "eroare necunoscută"), true);
-      });
+      var url = URL.createObjectURL(new Blob([json], { type: "application/json" }));
+      var a = document.createElement("a");
+      a.href = url;
+      a.download = "tracker-livrari-" + stamp + ".json";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      showToast("Fișier descărcat. Data viitoare folosește „Încarcă progres” cu el.");
+    });
+
+    $("btn-demo").addEventListener("click", function () {
+      var order = newOrderFromCsv("DEMO · PO-4471 · Bosch România",
+        "cod_piesa,denumire,cantitate_comandata\n" +
+        "BR-1042,Plăcuțe frână față,120\n" +
+        "FL-0093,Filtru ulei,300\n" +
+        "SP-2210,Bujie iridiu,200\n" +
+        "AM-5518,Amortizor spate,40");
+      addDeliveryToOrder(order,
+        "cod_piesa,denumire,cantitate_livrata,nr_factura,data\n" +
+        "BR-1042,Plăcuțe frână față,120,FA-9001,2026-09-12\n" +
+        "FL-0093,Filtru ulei,180,FA-9001,2026-09-12\n" +
+        "SP-2210,Bujie iridiu,220,FA-9001,2026-09-12\n" +
+        "XX-0001,Piesă înlocuitoare,10,FA-9001,2026-09-12");
+      addDeliveryToOrder(order,
+        "cod_piesa,denumire,cantitate_livrata,nr_factura,data\n" +
+        "FL-0093,Filtru ulei,60,FA-9042,2026-09-26");
+      state.orders.push(order);
+      render();
+      showToast("Exemplu încărcat: o comandă cu livrări complete, parțiale, în plus și neînceput.");
     });
 
     $("btn-load").addEventListener("click", function () { $("file-load").click(); });
@@ -852,6 +868,7 @@
     });
   }
 
+  restore();
   wireStaticEvents();
   wireDynamicEvents();
   render();
