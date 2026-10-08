@@ -60,7 +60,35 @@
     outline-offset: 2px;
   }
 
+  /* selector de limbă, colțul din dreapta sus (selector segmentat din stilul meu) */
+  .lang-switch {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    display: flex;
+    gap: 2px;
+    padding: 3px;
+    background: var(--soft);
+  }
+  .lang-switch button {
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    padding: 4px 11px;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+  }
+  .lang-switch button:hover { color: var(--ink); }
+  .lang-switch button[aria-pressed="true"] {
+    background: var(--surface);
+    color: var(--ink);
+    box-shadow: 0 1px 2px rgba(2, 12, 54, 0.12);
+  }
+
   .wrap {
+    position: relative;
     max-width: 1024px;
     margin: 0 auto;
     padding: 32px 20px 64px;
@@ -218,42 +246,6 @@
     font-size: 13px;
   }
 
-  /* summary tiles — semafor: bară colorată + etichetă în cuvinte + număr */
-  .tiles {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 12px;
-  }
-  @media (max-width: 640px) {
-    .tiles { grid-template-columns: repeat(2, 1fr); }
-  }
-  .tile {
-    padding: 16px 18px;
-    border: 1px solid var(--line);
-    border-left: 6px solid var(--muted);
-    background: var(--surface);
-  }
-  .tile .n {
-    font-family: var(--font-head);
-    font-weight: 600;
-    font-size: 30px;
-    font-variant-numeric: tabular-nums;
-    line-height: 1;
-    color: var(--ink);
-  }
-  .tile .l {
-    margin-top: 8px;
-    font-size: 12px;
-    font-weight: 600;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-  }
-  .tile.ok { border-left-color: var(--good); }
-  .tile.warn { border-left-color: var(--mid); }
-  .tile.pending { border-left-color: var(--idle); }
-  .tile.danger { border-left-color: var(--low); }
-
   /* new order form */
   .form-panel { padding: 20px; display: flex; flex-direction: column; gap: 14px; }
   .field { display: flex; flex-direction: column; gap: 6px; }
@@ -315,11 +307,35 @@
     font-weight: 600;
     font-variant-numeric: tabular-nums;
   }
-  .chip .dot { width: 8px; height: 8px; background: var(--muted); flex: none; }
-  .chip.ok .dot { background: var(--good); }
-  .chip.warn .dot { background: var(--mid); }
-  .chip.pending .dot { background: transparent; border: 2px solid var(--muted); }
-  .chip.danger .dot { background: var(--low); }
+  .chip { padding: 3px 10px; font-weight: 700; }
+  .chip .dot { width: 9px; height: 9px; flex: none; }
+  /* etichete pline, în culoarea semaforului; forma pătratului (plin / gol) completează culoarea */
+  .chip.ok { background: var(--good); color: #fff; }
+  .chip.ok .dot { background: #fff; }
+  .chip.warn { background: var(--mid); color: var(--ink); }
+  .chip.warn .dot { background: var(--ink); }
+  .chip.pending { background: color-mix(in srgb, var(--idle) 60%, var(--surface)); color: var(--ink); }
+  .chip.pending .dot { background: transparent; border: 2px solid var(--ink); }
+  .chip.danger { background: var(--low); color: #fff; }
+  .chip.danger .dot { background: #fff; }
+
+  /* facturi parțiale încărcate */
+  .invoices { border: 1px solid var(--line); background: var(--surface); padding: 12px 16px; }
+  .invoices > strong { font-size: 13px; }
+  .invoice-list { list-style: none; margin: 8px 0 0; padding: 0; }
+  .invoice-list li {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    padding: 8px 0;
+    border-top: 1px solid var(--line);
+    font-size: 13px;
+  }
+  .invoice-list .inv-nr { font-weight: 600; min-width: 110px; }
+  .invoice-list .inv-date { color: var(--muted); min-width: 90px; }
+  .invoice-list .inv-sum { color: var(--muted); flex: 1; }
+  .invoices .note { margin: 6px 0 0; }
 
   .order-body { border-top: 1px solid var(--line); padding: 20px; display: flex; flex-direction: column; gap: 16px; }
   .add-delivery { padding: 14px; background: var(--paper); border: 1px dashed var(--line); display: flex; flex-direction: column; gap: 8px; }
@@ -377,8 +393,9 @@
     color: var(--ink);
     font-size: 13px;
   }
-  .banner.danger { border-left-color: var(--low); }
-  .banner.warn { border-left-color: var(--mid); }
+  .banner { border-left-width: 8px; }
+  .banner.danger { border-left-color: var(--low); background: color-mix(in srgb, var(--low) 12%, var(--surface)); }
+  .banner.warn { border-left-color: var(--mid); background: color-mix(in srgb, var(--mid) 24%, var(--surface)); }
   .banner ul { margin: 4px 0 0; padding-left: 18px; }
   .unmatched-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
   .unmatched-row .btn { flex: none; }
@@ -426,73 +443,76 @@
 
 <div class="wrap">
 
+  <div class="lang-switch" role="group" aria-label="Limba / Language">
+    <button type="button" data-set-lang="ro" aria-pressed="true">RO</button>
+    <button type="button" data-set-lang="en" aria-pressed="false">EN</button>
+  </div>
+
   <div class="topbar">
     <div>
       <div class="brand">
         <span class="logo" aria-hidden="true"><i></i></span>
-        <p class="brand-eyebrow">Piese Auto · Aprovizionare</p>
+        <p class="brand-eyebrow" data-i18n="eyebrow">Piese Auto · Aprovizionare</p>
       </div>
-      <h1>Tracker <span class="key">Livrări</span> Comenzi</h1>
-      <p class="sub">Urmărește ce s-a livrat față de ce ai comandat, comandă cu comandă, fără să mai deschizi fiecare factură manual.</p>
+      <h1 data-i18n-html="h1"><span class="key">Tracker</span> Livrări Comenzi</h1>
+      <p class="sub" data-i18n="sub">Urmărește ce s-a livrat față de ce ai comandat, comandă cu comandă, fără să mai deschizi fiecare factură manual.</p>
     </div>
     <div class="topbar-actions">
-      <button class="btn" id="btn-demo" type="button">Încearcă cu un exemplu</button>
-      <button class="btn" id="btn-load" type="button">Încarcă progres</button>
+      <button class="btn" id="btn-demo" type="button" data-i18n="btnDemo">Încearcă cu un exemplu</button>
+      <button class="btn" id="btn-load" type="button" data-i18n="btnLoad">Încarcă progres</button>
       <input type="file" id="file-load" accept="application/json,.json" />
-      <button class="btn btn-primary" id="btn-save" type="button">Salvează progres</button>
+      <button class="btn btn-primary" id="btn-save" type="button" data-i18n="btnSave">Salvează progres</button>
     </div>
   </div>
 
   <section class="steps">
     <div class="panel step">
       <div class="step-num">1</div>
-      <h3>Extrage liniile cu Claude</h3>
-      <p>Deschide o conversație cu Claude, atașează comanda sau factura (PDF, Excel sau poză — orice format ai) și lipește promptul de mai jos. Claude îți întoarce liniile gata formatate.</p>
+      <h3 data-i18n="step1Title">Extrage liniile cu Claude</h3>
+      <p data-i18n="step1Text">Deschide o conversație cu Claude, atașează comanda sau factura (PDF, Excel sau poză — orice format ai) și lipește promptul de mai jos. Claude îți întoarce liniile gata formatate.</p>
       <div class="prompt-box">
         <textarea id="prompt-text" class="mono" readonly rows="6"></textarea>
-        <button class="btn btn-sm" id="btn-copy-prompt" type="button">Copiază promptul</button>
+        <button class="btn btn-sm" id="btn-copy-prompt" type="button" data-i18n="copyPrompt">Copiază promptul</button>
       </div>
     </div>
     <div class="panel step">
       <div class="step-num">2</div>
-      <h3>Lipește rezultatul aici</h3>
-      <p>Copiază CSV-ul primit de la Claude și folosește-l ca să creezi o comandă nouă mai jos, sau ca să adaugi o livrare pe o comandă existentă. Aplicația face potrivirea automat, pe cod de piesă.</p>
-      <p class="note">Datele se salvează automat în acest browser. Ca să le muți pe alt calculator sau să ai o copie de siguranță, apasă <strong>Salvează progres</strong>.</p>
+      <h3 data-i18n="step2Title">Lipește rezultatul aici</h3>
+      <p data-i18n="step2Text">Copiază CSV-ul primit de la Claude și folosește-l ca să creezi o comandă nouă mai jos, sau ca să adaugi factura unei livrări parțiale pe o comandă existentă. Aplicația face potrivirea automat, pe cod de piesă.</p>
+      <p class="note" data-i18n-html="step2Note">Datele se salvează automat în acest browser. Ca să le muți pe alt calculator sau să ai o copie de siguranță, apasă <strong>Salvează progres</strong>.</p>
     </div>
   </section>
 
-  <section id="tiles-section"></section>
-
   <section class="panel form-panel">
     <div class="section-head">
-      <h2>Comandă nouă</h2>
+      <h2 data-i18n="newOrderTitle">Comandă nouă</h2>
     </div>
     <div class="form-row" style="gap:12px; align-items:flex-start;">
       <div class="field" style="flex:1; min-width:220px;">
-        <label for="new-order-name">Denumire comandă</label>
-        <input type="text" id="new-order-name" placeholder="ex: PO-4471 · Bosch România" />
+        <label for="new-order-name" data-i18n="orderNameLabel">Denumire comandă</label>
+        <input type="text" id="new-order-name" data-i18n-ph="orderNamePh" placeholder="ex: PO-4471 · Bosch România" />
       </div>
     </div>
     <div class="field">
-      <label for="new-order-csv">Linii comandă (CSV de la Claude)</label>
-      <textarea id="new-order-csv" class="mono" placeholder="cod_piesa,denumire,cantitate_comandata&#10;BR-1042,Placute frana fata,120&#10;FL-0093,Filtru ulei,300"></textarea>
-      <p class="hint">Format așteptat: <code>cod_piesa,denumire,cantitate_comandata</code> — un rând de titlu e opțional, îl ignorăm automat.</p>
+      <label for="new-order-csv" data-i18n="orderCsvLabel">Linii comandă (CSV de la Claude)</label>
+      <textarea id="new-order-csv" class="mono" data-i18n-ph="orderCsvPh" placeholder="cod_piesa,denumire,cantitate_comandata&#10;BR-1042,Placute frana fata,120&#10;FL-0093,Filtru ulei,300"></textarea>
+      <p class="hint" data-i18n-html="orderCsvHint">Format așteptat: <code>cod_piesa,denumire,cantitate_comandata</code> — un rând de titlu e opțional, îl ignorăm automat.</p>
     </div>
     <div class="form-row">
-      <button class="btn btn-primary" id="btn-create-order" type="button">Creează comanda</button>
+      <button class="btn btn-primary" id="btn-create-order" type="button" data-i18n="createBtn">Creează comanda</button>
       <span class="note" id="create-order-msg"></span>
     </div>
   </section>
 
   <section>
     <div class="section-head" style="margin-bottom:12px;">
-      <h2>Comenzile tale</h2>
+      <h2 data-i18n="ordersTitle">Comenzile tale</h2>
       <span class="count" id="orders-count"></span>
     </div>
     <div class="orders" id="orders-list"></div>
   </section>
 
-  <footer class="hint-footer">Tracker local · datele rămân în acest browser, nu pleacă pe niciun server.</footer>
+  <footer class="hint-footer" data-i18n="footer">Tracker local · datele rămân în acest browser, nu pleacă pe niciun server.</footer>
 </div>
 
 <div id="toasts"></div>
@@ -501,20 +521,218 @@
 (function () {
   "use strict";
 
-  var PROMPT_ORDER_AND_INVOICE =
-    "Ești un asistent care extrage linii de piese auto dintr-un document (comandă de achiziție sau " +
-    "factură de livrare). Atașat găsești documentul. Extrage TOATE liniile de piese și dă-mi rezultatul " +
-    "STRICT ca CSV (fără text explicativ înainte sau după), cu virgulă ca separator, o linie de titlu, apoi datele:\n\n" +
-    "Dacă documentul este o COMANDĂ (purchase order):\n" +
-    "cod_piesa,denumire,cantitate_comandata\n\n" +
-    "Dacă documentul este o FACTURĂ de livrare:\n" +
-    "cod_piesa,denumire,cantitate_livrata,nr_factura,data\n\n" +
-    "Reguli: cod_piesa exact ca în document (fără spații în plus); cantitate ca număr întreg, fără text; " +
-    "dacă denumirea conține virgulă, pune-o între ghilimele; dacă nu găsești un cod de piesă explicit, " +
-    "folosește codul intern/SKU din document. Nu adăuga alte coloane și nu rezuma — vreau toate liniile.";
+  // ---- texte RO / EN ----
+  // Numele coloanelor CSV (cod_piesa, denumire, ...) rămân identice în ambele limbi:
+  // sunt formatul pe care îl citește aplicația, iar promptul îi cere lui Claude să le folosească exact așa.
+  var I18N = {
+    ro: {
+      title: "Tracker Livrări Comenzi",
+      eyebrow: "Piese Auto · Aprovizionare",
+      h1: '<span class="key">Tracker</span> Livrări Comenzi',
+      sub: "Urmărește ce s-a livrat față de ce ai comandat, comandă cu comandă, fără să mai deschizi fiecare factură manual.",
+      btnDemo: "Încearcă cu un exemplu",
+      btnLoad: "Încarcă progres",
+      btnSave: "Salvează progres",
+      step1Title: "Extrage liniile cu Claude",
+      step1Text: "Deschide o conversație cu Claude, atașează comanda sau factura (PDF, Excel sau poză — orice format ai) și lipește promptul de mai jos. Claude îți întoarce liniile gata formatate.",
+      copyPrompt: "Copiază promptul",
+      step2Title: "Lipește rezultatul aici",
+      step2Text: "Copiază CSV-ul primit de la Claude și folosește-l ca să creezi o comandă nouă mai jos, sau ca să adaugi factura unei livrări parțiale pe o comandă existentă. Aplicația face potrivirea automat, pe cod de piesă.",
+      step2Note: "Datele se salvează automat în acest browser. Ca să le muți pe alt calculator sau să ai o copie de siguranță, apasă <strong>Salvează progres</strong>.",
+      newOrderTitle: "Comandă nouă",
+      orderNameLabel: "Denumire comandă",
+      orderNamePh: "ex: PO-4471 · Bosch România",
+      orderCsvLabel: "Linii comandă (CSV de la Claude)",
+      orderCsvPh: "cod_piesa,denumire,cantitate_comandata\nBR-1042,Placute frana fata,120\nFL-0093,Filtru ulei,300",
+      orderCsvHint: "Format așteptat: <code>cod_piesa,denumire,cantitate_comandata</code> — un rând de titlu e opțional, îl ignorăm automat.",
+      createBtn: "Creează comanda",
+      ordersTitle: "Comenzile tale",
+      footer: "Tracker local · datele rămân în acest browser, nu pleacă pe niciun server.",
+      orderSingular: "comandă",
+      orderPlural: "comenzi",
+      empty: "Nu ai nicio comandă încă. Creeaz-o mai sus, cu CSV-ul extras de Claude din PO.",
+      noName: "Comandă fără nume",
+      statusOk: "Complet",
+      statusWarn: "Parțial",
+      statusPending: "Neînceput",
+      statusDanger: "Peste comandă",
+      lineOne: "{n} linie",
+      lineMany: "{n} linii",
+      orderMeta: "creată {date} · {lines} · {inv}",
+      invoiceOne: "{n} factură",
+      invoiceMany: "{n} facturi",
+      invoicesTitle: "Facturi parțiale încărcate ({n})",
+      invoicesEmpty: "Nicio factură încărcată încă.",
+      invoiceLines: "{lines} · {pcs} buc",
+      removeInvoice: "Elimină",
+      confirmRemove: 'Elimini factura "{nr}" de pe această comandă? Cantitățile ei vor fi scăzute din "Livrat".',
+      invoiceRemoved: 'Factura "{nr}" a fost eliminată.',
+      dupTitle: "{n} rând(uri) ignorate — factură deja încărcată pe această comandă",
+      dupHint: " Nu le-am adăugat din nou, ca să nu se dubleze cantitățile.",
+      dupRow: "{nr} — rânduri ignorate: {n}",
+      dupSuffix: ", {n} ignorate (duplicate)",
+      noNumberNote: "{n} rând(uri) fără număr de factură: nu pot fi verificate pentru dubluri. Completează nr_factura data viitoare.",
+      history: "istoric ({n})",
+      noInvoice: "fără nr.",
+      pcs: "buc",
+      addDeliveryTitle: "Adaugă factura pentru o livrare parțială (CSV de la Claude)",
+      addBtn: "Adaugă",
+      thCode: "Cod",
+      thName: "Denumire",
+      thOrdered: "Comandat",
+      thDelivered: "Livrat",
+      thRemaining: "Rămas",
+      thStatus: "Status",
+      promptCopied: "Prompt copiat — lipește-l în Claude.",
+      copyFailed: "Nu am putut copia automat — am selectat textul, folosește Ctrl+C.",
+      selectManually: "Selectează textul de mai sus și copiază-l cu Ctrl+C.",
+      noValidLines: "N-am găsit linii valide în CSV. Verifică formatul: cod_piesa,denumire,cantitate_comandata.",
+      noValidLinesDelivery: "N-am găsit linii valide în CSV.",
+      orderCreated: 'Comanda "{name}" a fost creată ({lines}).',
+      saved: "Fișier descărcat. Data viitoare folosește „Încarcă progres” cu el.",
+      loaded: "Progres încărcat — comenzi: {n}.",
+      badFile: "Fișierul nu pare un progres salvat de aici — verifică-l.",
+      demoLoaded: "Exemplu încărcat: o comandă cu livrări complete, parțiale, în plus și neînceput.",
+      linesUpdated: "Linii actualizate: {n}",
+      unmatchedSuffix: ", {n} nepotrivite",
+      unmatchedTitle: "{n} cod(uri) nu se potrivesc cu nicio linie din comandă",
+      unmatchedHint: " — posibil piesă înlocuitoare sau cod greșit pe factură.",
+      demoOrderName: "DEMO · PO-4471 · Bosch România",
+      demoPart1: "Plăcuțe frână față",
+      demoPart2: "Filtru ulei",
+      demoPart3: "Bujie iridiu",
+      demoPart4: "Amortizor spate",
+      demoPart5: "Piesă înlocuitoare",
+      dateLocale: "ro-RO",
+      prompt:
+        "Ești un asistent care extrage linii de piese auto dintr-un document (comandă de achiziție sau " +
+        "factură de livrare). Atașat găsești documentul. Extrage TOATE liniile de piese și dă-mi rezultatul " +
+        "STRICT ca CSV (fără text explicativ înainte sau după), cu virgulă ca separator, o linie de titlu, apoi datele:\n\n" +
+        "Dacă documentul este o COMANDĂ (purchase order):\n" +
+        "cod_piesa,denumire,cantitate_comandata\n\n" +
+        "Dacă documentul este o FACTURĂ de livrare:\n" +
+        "cod_piesa,denumire,cantitate_livrata,nr_factura,data\n\n" +
+        "Reguli: cod_piesa exact ca în document (fără spații în plus); cantitate ca număr întreg, fără text; " +
+        "la o factură, completează nr_factura și data pe FIECARE rând, cu numărul și data facturii; " +
+        "dacă denumirea conține virgulă, pune-o între ghilimele; dacă nu găsești un cod de piesă explicit, " +
+        "folosește codul intern/SKU din document. Nu adăuga alte coloane și nu rezuma — vreau toate liniile."
+    },
+    en: {
+      title: "Order Delivery Tracker",
+      eyebrow: "Auto Parts · Procurement",
+      h1: 'Order Delivery <span class="key">Tracker</span>',
+      sub: "See what has been delivered against what you ordered, order by order, without opening every invoice by hand.",
+      btnDemo: "Try with an example",
+      btnLoad: "Load progress",
+      btnSave: "Save progress",
+      step1Title: "Extract the lines with Claude",
+      step1Text: "Open a conversation with Claude, attach the order or invoice (PDF, Excel or photo — any format) and paste the prompt below. Claude returns the lines ready to use.",
+      copyPrompt: "Copy prompt",
+      step2Title: "Paste the result here",
+      step2Text: "Copy the CSV Claude gives you and use it to create a new order below, or to add the invoice of a partial delivery to an existing order. The app matches everything automatically, by part code.",
+      step2Note: "Your data is saved automatically in this browser. To move it to another computer or keep a backup, press <strong>Save progress</strong>.",
+      newOrderTitle: "New order",
+      orderNameLabel: "Order name",
+      orderNamePh: "e.g. PO-4471 · Bosch Romania",
+      orderCsvLabel: "Order lines (CSV from Claude)",
+      orderCsvPh: "cod_piesa,denumire,cantitate_comandata\nBR-1042,Front brake pads,120\nFL-0093,Oil filter,300",
+      orderCsvHint: "Expected format: <code>cod_piesa,denumire,cantitate_comandata</code> — a header row is optional, it is ignored automatically. (Column names stay in Romanian on purpose: that is what the app reads.)",
+      createBtn: "Create order",
+      ordersTitle: "Your orders",
+      footer: "Local tracker · your data stays in this browser and is never sent to a server.",
+      orderSingular: "order",
+      orderPlural: "orders",
+      empty: "You have no orders yet. Create one above, using the CSV Claude extracted from the PO.",
+      noName: "Untitled order",
+      statusOk: "Complete",
+      statusWarn: "Partial",
+      statusPending: "Not started",
+      statusDanger: "Over-delivered",
+      lineOne: "{n} line",
+      lineMany: "{n} lines",
+      orderMeta: "created {date} · {lines} · {inv}",
+      invoiceOne: "{n} invoice",
+      invoiceMany: "{n} invoices",
+      invoicesTitle: "Partial invoices uploaded ({n})",
+      invoicesEmpty: "No invoice uploaded yet.",
+      invoiceLines: "{lines} · {pcs} pcs",
+      removeInvoice: "Remove",
+      confirmRemove: 'Remove invoice "{nr}" from this order? Its quantities will be subtracted from "Delivered".',
+      invoiceRemoved: 'Invoice "{nr}" was removed.',
+      dupTitle: "{n} line(s) skipped — invoice already uploaded on this order",
+      dupHint: " They were not added again, so quantities aren't doubled.",
+      dupRow: "{nr} — lines skipped: {n}",
+      dupSuffix: ", {n} skipped (duplicate)",
+      noNumberNote: "{n} line(s) had no invoice number, so they can't be checked for duplicates. Include nr_factura next time.",
+      history: "history ({n})",
+      noInvoice: "no inv. no.",
+      pcs: "pcs",
+      addDeliveryTitle: "Add the invoice for a partial delivery (CSV from Claude)",
+      addBtn: "Add",
+      thCode: "Code",
+      thName: "Description",
+      thOrdered: "Ordered",
+      thDelivered: "Delivered",
+      thRemaining: "Remaining",
+      thStatus: "Status",
+      promptCopied: "Prompt copied — paste it into Claude.",
+      copyFailed: "Couldn't copy automatically — the text is selected, use Ctrl+C.",
+      selectManually: "Select the text above and copy it with Ctrl+C.",
+      noValidLines: "No valid lines found in the CSV. Check the format: cod_piesa,denumire,cantitate_comandata.",
+      noValidLinesDelivery: "No valid lines found in the CSV.",
+      orderCreated: 'Order "{name}" was created ({lines}).',
+      saved: "File downloaded. Next time, use “Load progress” with it.",
+      loaded: "Progress loaded — orders: {n}.",
+      badFile: "This file doesn't look like progress saved from here — please check it.",
+      demoLoaded: "Example loaded: one order with complete, partial, over-delivered and not-started lines.",
+      linesUpdated: "Lines updated: {n}",
+      unmatchedSuffix: ", {n} unmatched",
+      unmatchedTitle: "{n} code(s) don't match any line on the order",
+      unmatchedHint: " — possibly a substitute part or a wrong code on the invoice.",
+      demoOrderName: "DEMO · PO-4471 · Bosch Romania",
+      demoPart1: "Front brake pads",
+      demoPart2: "Oil filter",
+      demoPart3: "Iridium spark plug",
+      demoPart4: "Rear shock absorber",
+      demoPart5: "Substitute part",
+      dateLocale: "en-GB",
+      prompt:
+        "You are an assistant that extracts auto parts lines from a document (a purchase order or a " +
+        "delivery invoice). The document is attached. Extract ALL part lines and give me the result " +
+        "STRICTLY as CSV (no explanatory text before or after), comma-separated, one header line, then the data:\n\n" +
+        "If the document is a PURCHASE ORDER:\n" +
+        "cod_piesa,denumire,cantitate_comandata\n\n" +
+        "If the document is a DELIVERY INVOICE:\n" +
+        "cod_piesa,denumire,cantitate_livrata,nr_factura,data\n\n" +
+        "Rules: use these column names exactly as written (they are in Romanian on purpose — the tracker reads them); " +
+        "cod_piesa exactly as in the document (no extra spaces); quantity as a whole number, no text; " +
+        "for an invoice, fill nr_factura and data on EVERY row with the invoice number and date; " +
+        "if the description contains a comma, wrap it in quotes; if you can't find an explicit part code, " +
+        "use the internal code/SKU from the document. Don't add other columns and don't summarize — I want every line."
+    }
+  };
+
+  var LANG_KEY = "tracker-lang";
+  var lang = "ro";
+
+  function detectLang() {
+    try {
+      var saved = localStorage.getItem(LANG_KEY);
+      if (saved === "ro" || saved === "en") return saved;
+    } catch (e) { /* stocare indisponibilă */ }
+    return (navigator.language || "").toLowerCase().indexOf("ro") === 0 ? "ro" : "en";
+  }
+
+  function t(key, params) {
+    var s = I18N[lang][key];
+    if (s == null) s = I18N.ro[key];
+    if (params) {
+      Object.keys(params).forEach(function (k) { s = s.split("{" + k + "}").join(params[k]); });
+    }
+    return s;
+  }
 
   var state = { orders: [] };
-  var els = {};
 
   function $(id) { return document.getElementById(id); }
 
@@ -529,13 +747,25 @@
   }
 
   function showToast(msg, isError) {
-    var t = document.createElement("div");
-    t.className = "toast" + (isError ? " err" : "");
-    t.textContent = msg;
-    $("toasts").appendChild(t);
+    var el = document.createElement("div");
+    el.className = "toast" + (isError ? " err" : "");
+    el.textContent = msg;
+    $("toasts").appendChild(el);
     setTimeout(function () {
-      t.remove();
+      el.remove();
     }, 4200);
+  }
+
+  function applyLang() {
+    document.documentElement.lang = lang;
+    document.title = t("title");
+    document.querySelectorAll("[data-i18n]").forEach(function (el) { el.textContent = t(el.getAttribute("data-i18n")); });
+    document.querySelectorAll("[data-i18n-html]").forEach(function (el) { el.innerHTML = t(el.getAttribute("data-i18n-html")); });
+    document.querySelectorAll("[data-i18n-ph]").forEach(function (el) { el.placeholder = t(el.getAttribute("data-i18n-ph")); });
+    $("prompt-text").value = t("prompt");
+    document.querySelectorAll("[data-set-lang]").forEach(function (b) {
+      b.setAttribute("aria-pressed", b.getAttribute("data-set-lang") === lang ? "true" : "false");
+    });
   }
 
   // ---- CSV parsing (tolerant: handles quoted fields, ignores a header row) ----
@@ -590,7 +820,7 @@
       lines.push(line);
     });
     if (!lines.length) return null;
-    return { id: uid(), name: name || "Comandă fără nume", createdAt: Date.now(), lines: lines };
+    return { id: uid(), name: name || t("noName"), createdAt: Date.now(), lines: lines };
   }
 
   function lineDelivered(line) {
@@ -606,25 +836,74 @@
   }
 
   function statusLabel(status) {
-    return { ok: "Complet", warn: "Parțial", pending: "Neînceput", danger: "Peste comandă" }[status];
+    return t({ ok: "statusOk", warn: "statusWarn", pending: "statusPending", danger: "statusDanger" }[status]);
+  }
+
+  // Număr de factură normalizat (fără majuscule / spații în plus), ca "FA-9001" și "fa-9001 " să fie aceeași factură.
+  function normNr(s) {
+    return String(s || "").trim().toLowerCase().replace(/\s+/g, " ");
+  }
+
+  // Cheia unei facturi: numărul ei, sau — pentru livrările fără număr — grupul încărcării (batch).
+  function invoiceKey(d) {
+    var n = normNr(d.nrFactura);
+    return n ? "n:" + n : "b:" + (d.batch || "vechi");
+  }
+
+  // Lista facturilor încărcate pe o comandă, calculată din livrările salvate pe linii
+  // (nu stocăm nimic în plus, deci merge și cu fișierele salvate înainte de această funcție).
+  function orderInvoices(order) {
+    var map = {};
+    var list = [];
+    order.lines.forEach(function (line) {
+      line.livrari.forEach(function (d) {
+        var key = invoiceKey(d);
+        var g = map[key];
+        if (!g) {
+          g = map[key] = { key: key, nr: d.nrFactura || "", data: d.data || "", lines: 0, pcs: 0 };
+          list.push(g);
+        }
+        g.lines++;
+        g.pcs += d.cantitate;
+        if (!g.data && d.data) g.data = d.data;
+      });
+    });
+    return list;
   }
 
   function addDeliveryToOrder(order, csvText) {
     var rows = parseCsv(csvText);
     var matched = 0;
     var unmatched = [];
+    var duplicates = [];
+    var noNumber = 0;
+    var batch = uid();
+
+    // Ce facturi (număr + cod piesă) sunt deja înregistrate pe comandă, înainte de această lipire.
+    var seen = {};
+    order.lines.forEach(function (line) {
+      line.livrari.forEach(function (d) {
+        if (normNr(d.nrFactura)) seen[normNr(d.nrFactura) + "|" + line.cod.toLowerCase()] = true;
+      });
+    });
+
     rows.forEach(function (r) {
       var cod = r[0], denumire = r[1], qty = parseInt(r[2], 10), nrFactura = r[3] || "", data = r[4] || "";
       if (!cod || isNaN(qty)) return;
       var line = order.lines.find(function (l) { return l.cod.toLowerCase() === cod.toLowerCase(); });
-      if (line) {
-        line.livrari.push({ cantitate: qty, nrFactura: nrFactura, data: data });
-        matched++;
-      } else {
+      if (!line) {
         unmatched.push({ cod: cod, denumire: denumire || "", cantitate: qty, nrFactura: nrFactura, data: data });
+        return;
       }
+      if (normNr(nrFactura) && seen[normNr(nrFactura) + "|" + line.cod.toLowerCase()]) {
+        duplicates.push({ cod: cod, cantitate: qty, nrFactura: nrFactura });
+        return;
+      }
+      if (!normNr(nrFactura)) noNumber++;
+      line.livrari.push({ cantitate: qty, nrFactura: nrFactura, data: data, batch: batch });
+      matched++;
     });
-    return { matched: matched, unmatched: unmatched };
+    return { matched: matched, unmatched: unmatched, duplicates: duplicates, noNumber: noNumber };
   }
 
   // ---- rendering ----
@@ -642,38 +921,41 @@
   }
 
   function render() {
-    renderTiles();
     renderOrders();
     persist();
   }
 
-  function allLines() {
-    var out = [];
-    state.orders.forEach(function (o) { o.lines.forEach(function (l) { out.push(l); }); });
-    return out;
+  function linesLabel(n) {
+    return t(n === 1 ? "lineOne" : "lineMany", { n: n });
   }
 
-  function renderTiles() {
-    var host = $("tiles-section");
-    var lines = allLines();
-    if (!state.orders.length) { host.innerHTML = ""; return; }
-    var counts = { ok: 0, warn: 0, pending: 0, danger: 0 };
-    lines.forEach(function (l) { counts[lineStatus(l)]++; });
-    host.innerHTML =
-      '<div class="tiles">' +
-      '<div class="tile ok"><div class="n">' + counts.ok + '</div><div class="l">Complete</div></div>' +
-      '<div class="tile warn"><div class="n">' + counts.warn + '</div><div class="l">Parțiale</div></div>' +
-      '<div class="tile pending"><div class="n">' + counts.pending + '</div><div class="l">Neîncepute</div></div>' +
-      '<div class="tile danger"><div class="n">' + counts.danger + '</div><div class="l">Peste comandă</div></div>' +
+  function invoiceCountLabel(order) {
+    var n = orderInvoices(order).length;
+    return t(n === 1 ? "invoiceOne" : "invoiceMany", { n: n });
+  }
+
+  function invoicesHtml(order) {
+    var list = orderInvoices(order);
+    var rows = list.map(function (g) {
+      return '<li>' +
+        '<span class="mono inv-nr">' + escapeHtml(g.nr || t("noInvoice")) + '</span>' +
+        '<span class="inv-date">' + escapeHtml(g.data) + '</span>' +
+        '<span class="inv-sum">' + t("invoiceLines", { lines: linesLabel(g.lines), pcs: g.pcs }) + '</span>' +
+        '<button class="btn btn-sm btn-ghost" type="button" data-remove-invoice="' + order.id + '" data-invoice-key="' + escapeHtml(g.key) + '">' + t("removeInvoice") + '</button>' +
+        '</li>';
+    }).join("");
+    return '<div class="invoices">' +
+      '<strong>' + t("invoicesTitle", { n: list.length }) + '</strong>' +
+      (list.length ? '<ul class="invoice-list">' + rows + '</ul>' : '<p class="note">' + t("invoicesEmpty") + '</p>') +
       '</div>';
   }
 
   function renderOrders() {
     var host = $("orders-list");
-    $("orders-count").textContent = state.orders.length ? (state.orders.length + (state.orders.length === 1 ? " comandă" : " comenzi")) : "";
+    $("orders-count").textContent = state.orders.length ? (state.orders.length + " " + (state.orders.length === 1 ? t("orderSingular") : t("orderPlural"))) : "";
 
     if (!state.orders.length) {
-      host.innerHTML = '<div class="panel empty">Nu ai nicio comandă încă. Creeaz-o mai sus, cu CSV-ul extras de Claude din PO.</div>';
+      host.innerHTML = '<div class="panel empty">' + t("empty") + '</div>';
       return;
     }
 
@@ -682,14 +964,14 @@
     host.innerHTML = sorted.map(function (order, idx) {
       var counts = { ok: 0, warn: 0, pending: 0, danger: 0 };
       order.lines.forEach(function (l) { counts[lineStatus(l)]++; });
-      var dateStr = new Date(order.createdAt).toLocaleDateString("ro-RO", { day: "2-digit", month: "short", year: "numeric" });
+      var dateStr = new Date(order.createdAt).toLocaleDateString(t("dateLocale"), { day: "2-digit", month: "short", year: "numeric" });
 
       var rowsHtml = order.lines.map(function (line) {
         var status = lineStatus(line);
         var delivered = lineDelivered(line);
         var remaining = line.comandat - delivered;
         var histRows = line.livrari.map(function (d) {
-          return '<div class="row"><span>' + escapeHtml(d.nrFactura || "fără nr.") + (d.data ? " · " + escapeHtml(d.data) : "") + '</span><span class="mono">' + d.cantitate + ' buc</span></div>';
+          return '<div class="row"><span>' + escapeHtml(d.nrFactura || t("noInvoice")) + (d.data ? " · " + escapeHtml(d.data) : "") + '</span><span class="mono">' + d.cantitate + ' ' + t("pcs") + '</span></div>';
         }).join("");
         return (
           '<tr>' +
@@ -699,7 +981,7 @@
           '<td class="qty-cell mono">' + delivered + '</td>' +
           '<td class="qty-cell mono">' + (remaining < 0 ? ("+" + Math.abs(remaining)) : remaining) + '</td>' +
           '<td><span class="chip ' + status + '"><span class="dot"></span>' + statusLabel(status) + '</span>' +
-          (line.livrari.length ? ' <button class="hist-toggle" data-toggle-hist="' + line.id + '" type="button">istoric (' + line.livrari.length + ')</button>' : '') +
+          (line.livrari.length ? ' <button class="hist-toggle" data-toggle-hist="' + line.id + '" type="button">' + t("history", { n: line.livrari.length }) + '</button>' : '') +
           '</td>' +
           '</tr>' +
           (line.livrari.length ? '<tr class="hist-row hidden" data-hist-row="' + line.id + '"><td colspan="6"><div class="hist-list">' + histRows + '</div></td></tr>' : '')
@@ -710,7 +992,7 @@
         '<details class="panel order-card"' + (idx === 0 ? " open" : "") + '>' +
         '<summary>' +
         '<div class="order-title"><span class="chev">▸</span><div><h3>' + escapeHtml(order.name) + '</h3>' +
-        '<div class="order-meta">creată ' + dateStr + ' · ' + order.lines.length + ' linii</div></div></div>' +
+        '<div class="order-meta">' + t("orderMeta", { date: dateStr, lines: linesLabel(order.lines.length), inv: invoiceCountLabel(order) }) + '</div></div></div>' +
         '<div class="order-stats">' +
         (counts.danger ? '<span class="chip danger"><span class="dot"></span>' + counts.danger + ' ' + statusLabel("danger") + '</span>' : '') +
         (counts.warn ? '<span class="chip warn"><span class="dot"></span>' + counts.warn + ' ' + statusLabel("warn") + '</span>' : '') +
@@ -720,15 +1002,16 @@
         '</summary>' +
         '<div class="order-body">' +
         '<div class="add-delivery">' +
-        '<strong style="font-size:13px;">Adaugă livrare (CSV factură de la Claude)</strong>' +
+        '<strong style="font-size:13px;">' + t("addDeliveryTitle") + '</strong>' +
         '<div class="form-row">' +
         '<textarea class="mono" data-delivery-input="' + order.id + '" rows="3" placeholder="cod_piesa,denumire,cantitate_livrata,nr_factura,data"></textarea>' +
-        '<button class="btn btn-primary" data-add-delivery="' + order.id + '" type="button">Adaugă</button>' +
+        '<button class="btn btn-primary" data-add-delivery="' + order.id + '" type="button">' + t("addBtn") + '</button>' +
         '</div>' +
         '<div data-delivery-msg="' + order.id + '"></div>' +
         '</div>' +
+        invoicesHtml(order) +
         '<div class="table-scroll"><table><thead><tr>' +
-        '<th>Cod</th><th>Denumire</th><th class="qty-cell">Comandat</th><th class="qty-cell">Livrat</th><th class="qty-cell">Rămas</th><th>Status</th>' +
+        '<th>' + t("thCode") + '</th><th>' + t("thName") + '</th><th class="qty-cell">' + t("thOrdered") + '</th><th class="qty-cell">' + t("thDelivered") + '</th><th class="qty-cell">' + t("thRemaining") + '</th><th>' + t("thStatus") + '</th>' +
         '</tr></thead><tbody>' + rowsHtml + '</tbody></table></div>' +
         '</div>' +
         '</details>'
@@ -738,20 +1021,27 @@
 
   // ---- events ----
   function wireStaticEvents() {
-    $("prompt-text").value = PROMPT_ORDER_AND_INVOICE;
+    document.querySelectorAll("[data-set-lang]").forEach(function (b) {
+      b.addEventListener("click", function () {
+        lang = b.getAttribute("data-set-lang");
+        try { localStorage.setItem(LANG_KEY, lang); } catch (e) { /* stocare indisponibilă */ }
+        applyLang();
+        render();
+      });
+    });
 
     $("btn-copy-prompt").addEventListener("click", function () {
-      var text = PROMPT_ORDER_AND_INVOICE;
+      var text = t("prompt");
       if (navigator.clipboard && navigator.clipboard.writeText) {
         navigator.clipboard.writeText(text).then(function () {
-          showToast("Prompt copiat — lipește-l în Claude.");
+          showToast(t("promptCopied"));
         }, function () {
           $("prompt-text").select();
-          showToast("Nu am putut copia automat — am selectat textul, folosește Ctrl+C.");
+          showToast(t("copyFailed"));
         });
       } else {
         $("prompt-text").select();
-        showToast("Selectează textul de mai sus și copiază-l cu Ctrl+C.");
+        showToast(t("selectManually"));
       }
     });
 
@@ -761,7 +1051,7 @@
       var order = newOrderFromCsv(name, csv);
       var msg = $("create-order-msg");
       if (!order) {
-        msg.textContent = "N-am găsit linii valide în CSV. Verifică formatul: cod_piesa,denumire,cantitate_comandata.";
+        msg.textContent = t("noValidLines");
         msg.style.color = "var(--danger)";
         return;
       }
@@ -770,7 +1060,7 @@
       $("new-order-csv").value = "";
       msg.textContent = "";
       render();
-      showToast('Comanda "' + order.name + '" a fost creată cu ' + order.lines.length + ' linii.');
+      showToast(t("orderCreated", { name: order.name, lines: linesLabel(order.lines.length) }));
     });
 
     $("btn-save").addEventListener("click", function () {
@@ -785,28 +1075,29 @@
       a.click();
       a.remove();
       URL.revokeObjectURL(url);
-      showToast("Fișier descărcat. Data viitoare folosește „Încarcă progres” cu el.");
+      showToast(t("saved"));
     });
 
     $("btn-demo").addEventListener("click", function () {
-      var order = newOrderFromCsv("DEMO · PO-4471 · Bosch România",
+      var p1 = t("demoPart1"), p2 = t("demoPart2"), p3 = t("demoPart3"), p4 = t("demoPart4"), p5 = t("demoPart5");
+      var order = newOrderFromCsv(t("demoOrderName"),
         "cod_piesa,denumire,cantitate_comandata\n" +
-        "BR-1042,Plăcuțe frână față,120\n" +
-        "FL-0093,Filtru ulei,300\n" +
-        "SP-2210,Bujie iridiu,200\n" +
-        "AM-5518,Amortizor spate,40");
+        "BR-1042," + p1 + ",120\n" +
+        "FL-0093," + p2 + ",300\n" +
+        "SP-2210," + p3 + ",200\n" +
+        "AM-5518," + p4 + ",40");
       addDeliveryToOrder(order,
         "cod_piesa,denumire,cantitate_livrata,nr_factura,data\n" +
-        "BR-1042,Plăcuțe frână față,120,FA-9001,2026-09-12\n" +
-        "FL-0093,Filtru ulei,180,FA-9001,2026-09-12\n" +
-        "SP-2210,Bujie iridiu,220,FA-9001,2026-09-12\n" +
-        "XX-0001,Piesă înlocuitoare,10,FA-9001,2026-09-12");
+        "BR-1042," + p1 + ",120,FA-9001,2026-09-12\n" +
+        "FL-0093," + p2 + ",180,FA-9001,2026-09-12\n" +
+        "SP-2210," + p3 + ",220,FA-9001,2026-09-12\n" +
+        "XX-0001," + p5 + ",10,FA-9001,2026-09-12");
       addDeliveryToOrder(order,
         "cod_piesa,denumire,cantitate_livrata,nr_factura,data\n" +
-        "FL-0093,Filtru ulei,60,FA-9042,2026-09-26");
+        "FL-0093," + p2 + ",60,FA-9042,2026-09-26");
       state.orders.push(order);
       render();
-      showToast("Exemplu încărcat: o comandă cu livrări complete, parțiale, în plus și neînceput.");
+      showToast(t("demoLoaded"));
     });
 
     $("btn-load").addEventListener("click", function () { $("file-load").click(); });
@@ -820,9 +1111,9 @@
           if (!data || !Array.isArray(data.orders)) throw new Error("format invalid");
           state = data;
           render();
-          showToast("Progres încărcat: " + state.orders.length + " comenzi.");
+          showToast(t("loaded", { n: state.orders.length }));
         } catch (err) {
-          showToast("Fișierul nu pare un progres salvat de aici — verifică-l.", true);
+          showToast(t("badFile"), true);
         }
       };
       reader.readAsText(file);
@@ -847,30 +1138,67 @@
         var msgHost = document.querySelector('[data-delivery-msg="' + orderId + '"]');
         if (!order || !input) return;
         var result = addDeliveryToOrder(order, input.value);
-        if (!result.matched && !result.unmatched.length) {
-          msgHost.innerHTML = '<p class="note" style="color:var(--danger);margin-top:6px;">N-am găsit linii valide în CSV.</p>';
+        if (!result.matched && !result.unmatched.length && !result.duplicates.length) {
+          msgHost.innerHTML = '<p class="note" style="color:var(--danger);margin-top:6px;">' + t("noValidLinesDelivery") + '</p>';
           return;
         }
-        input.value = "";
+        // Dacă totul a fost duplicat, lăsăm textul în casetă ca să vezi ce ai lipit.
+        var keepText = (result.matched || result.unmatched.length) ? "" : input.value;
         render();
-        if (result.unmatched.length) {
-          var host = document.querySelector('[data-delivery-msg="' + orderId + '"]');
-          if (host) {
-            host.innerHTML = '<div class="banner warn" style="margin-top:8px;">' +
-              '<span>⚠</span><div><strong>' + result.unmatched.length + ' cod(uri) nu se potrivesc cu nicio linie din comandă</strong> — posibil piesă înlocuitoare sau cod greșit pe factură.' +
-              '<ul>' + result.unmatched.map(function (u) {
-                return '<li class="unmatched-row"><span>' + escapeHtml(u.cod) + ' — ' + escapeHtml(u.denumire) + ' (' + u.cantitate + ' buc)</span></li>';
-              }).join("") + '</ul></div></div>';
-          }
+        var newInput = document.querySelector('[data-delivery-input="' + orderId + '"]');
+        if (newInput) newInput.value = keepText;
+
+        var banners = "";
+        if (result.duplicates.length) {
+          var perInvoice = {};
+          result.duplicates.forEach(function (d) { perInvoice[d.nrFactura] = (perInvoice[d.nrFactura] || 0) + 1; });
+          banners += '<div class="banner danger" style="margin-top:8px;">' +
+            '<span>⚠</span><div><strong>' + t("dupTitle", { n: result.duplicates.length }) + '</strong>' + t("dupHint") +
+            '<ul>' + Object.keys(perInvoice).map(function (nr) {
+              return '<li>' + escapeHtml(t("dupRow", { nr: nr, n: perInvoice[nr] })) + '</li>';
+            }).join("") + '</ul></div></div>';
         }
-        showToast(result.matched + " linii actualizate" + (result.unmatched.length ? ", " + result.unmatched.length + " nepotrivite" : "") + ".");
+        if (result.unmatched.length) {
+          banners += '<div class="banner warn" style="margin-top:8px;">' +
+            '<span>⚠</span><div><strong>' + t("unmatchedTitle", { n: result.unmatched.length }) + '</strong>' + t("unmatchedHint") +
+            '<ul>' + result.unmatched.map(function (u) {
+              return '<li class="unmatched-row"><span>' + escapeHtml(u.cod) + ' — ' + escapeHtml(u.denumire) + ' (' + u.cantitate + ' ' + t("pcs") + ')</span></li>';
+            }).join("") + '</ul></div></div>';
+        }
+        if (result.noNumber) {
+          banners += '<p class="note" style="margin-top:8px;">' + t("noNumberNote", { n: result.noNumber }) + '</p>';
+        }
+        var host = document.querySelector('[data-delivery-msg="' + orderId + '"]');
+        if (host) host.innerHTML = banners;
+
+        showToast(t("linesUpdated", { n: result.matched }) +
+          (result.unmatched.length ? t("unmatchedSuffix", { n: result.unmatched.length }) : "") +
+          (result.duplicates.length ? t("dupSuffix", { n: result.duplicates.length }) : "") + ".");
+        return;
+      }
+      var rmBtn = e.target.closest("[data-remove-invoice]");
+      if (rmBtn) {
+        var rmOrder = state.orders.find(function (o) { return o.id === rmBtn.getAttribute("data-remove-invoice"); });
+        var key = rmBtn.getAttribute("data-invoice-key");
+        if (!rmOrder) return;
+        var inv = orderInvoices(rmOrder).find(function (g) { return g.key === key; });
+        var label = inv && inv.nr ? inv.nr : t("noInvoice");
+        if (!window.confirm(t("confirmRemove", { nr: label }))) return;
+        rmOrder.lines.forEach(function (line) {
+          line.livrari = line.livrari.filter(function (d) { return invoiceKey(d) !== key; });
+        });
+        render();
+        showToast(t("invoiceRemoved", { nr: label }));
       }
     });
   }
 
+  lang = detectLang();
   restore();
   wireStaticEvents();
   wireDynamicEvents();
+  applyLang();
   render();
 })();
 </script>
+

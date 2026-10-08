@@ -11,6 +11,7 @@ Paste a purchase order and its invoices — extracted as CSV by Claude from a PD
 ## Why it's more than a spreadsheet
 
 - **Matching, not manual reconciliation.** Deliveries are matched to order lines by part code automatically; codes that don't match any line are flagged separately instead of silently dropped, so a wrong code or a substitute part never gets lost.
+- **Every partial invoice is tracked, and none is counted twice.** Each order lists the invoices uploaded so far (number, date, lines, pieces). If you paste an invoice whose number is already registered on that order, its rows are skipped with a warning instead of doubling the delivered quantities — matching ignores case and stray spaces. A mistaken invoice can be removed with confirmation. Rows with no invoice number can't be checked for duplicates, so the tracker says so; the extraction prompt asks Claude to fill the invoice number on every row.
 - **Duplicate part codes on one order get merged, not duplicated.** If a purchase order lists the same part code twice (e.g. split across a delivery schedule), the tracker sums the ordered quantity into one line rather than creating two — otherwise later delivery-matching would only ever find the first one, leaving the second permanently stuck at "not started."
 - **No backend.** State lives in the page; "Save progress" / "Load progress" round-trip it as a JSON file, so a procurement person can keep a running file per project without any server or login.
 
@@ -42,6 +43,10 @@ The token counts are an assumption, not a measurement; real usage depends on pag
 ## Persistence
 
 Runs as a plain static HTML file — no Claude Artifact required. Data autosaves to the browser's `localStorage` on every change, so reopening the page on the same computer restores your orders. **Salvează progres** / **Încarcă progres** export and import a JSON file, for backup or to move your data to another computer. Nothing is sent to any server.
+
+## Languages
+
+The interface is available in English and Romanian. The **EN / RO** button in the top bar switches everything — labels, statuses, messages, the demo data and the extraction prompt. The first visit picks Romanian if the browser is set to Romanian, English otherwise, and the choice is remembered. CSV column names (`cod_piesa`, `denumire`, …) stay the same in both languages because they are the format the app reads; the English prompt tells Claude to use them exactly.
 
 ## Usage
 
