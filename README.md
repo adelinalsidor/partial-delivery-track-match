@@ -10,6 +10,12 @@ Built for small procurement teams (auto parts resellers, for example) who don't 
 
 Create an order from an Excel or CSV file, then add each partial-delivery invoice with one click: choose the file and it is added to its order automatically. When creating an order, the page first tells you which columns are required (part code and quantity; description is optional). The tracker recognises the part-code, description and quantity columns by their headers, shows a preview to confirm, and matches delivered quantities against ordered quantities by part code, per line item. Each line shows a live status: not started, partial, complete, or over-delivered. Files are read in the browser — no server, no account. PDFs and photos are not read yet (planned, see the [roadmap](ROADMAP.md)).
 
+## Why the invoice
+
+A partial delivery can be followed through delivery orders, emails or the commercial invoice. This tracker reads only the invoice: it is the document that states what was actually delivered, so it settles the status of every order line. Delivery orders and emails are left out on purpose.
+
+This was a judgment call made from procurement experience and confirmed by the client.
+
 ## Why it's more than a spreadsheet
 
 - **Matching, not manual reconciliation.** Deliveries are matched to order lines by part code automatically; codes that don't match any line are flagged separately instead of silently dropped, so a wrong code or a substitute part never gets lost.
